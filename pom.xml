@@ -110,7 +110,7 @@
               <goals>
                 <goal>report</goal>
               </goals>
-              <phase>install</phase>
+              <phase>integration-test</phase>
             </execution>
           </executions>
         </plugin>
