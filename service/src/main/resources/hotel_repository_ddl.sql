@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "order"
     check_in DATE NOT NULL,
     check_out DATE NOT NULL,
     status VARCHAR(64) NOT NULL,
+    total_cost INT NOT NULL,
     user_id UUID NOT NULL REFERENCES "user" (id),
     apartment_id UUID NOT NULL REFERENCES apartment (id)
 );
