@@ -1,13 +1,3 @@
-CREATE TABLE IF NOT EXISTS user_detail
-(
-    id UUID PRIMARY KEY,
-    phone_number VARCHAR(64) UNIQUE NOT NULL,
-    photo VARCHAR(128) UNIQUE,
-    birthdate DATE NOT NULL,
-    money INT NOT NULL DEFAULT 0,
-    user_id UUID UNIQUE NOT NULL REFERENCES "user" (id)
-);
-
 CREATE TABLE IF NOT EXISTS "user"
 (
     id UUID PRIMARY KEY,
@@ -19,12 +9,22 @@ CREATE TABLE IF NOT EXISTS "user"
     gender VARCHAR(28) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS user_detail
+(
+    id UUID PRIMARY KEY,
+    phone_number VARCHAR(64) UNIQUE NOT NULL,
+    photo VARCHAR(128) UNIQUE,
+    birthdate DATE NOT NULL,
+    money INT NOT NULL DEFAULT 0,
+    user_id UUID UNIQUE NOT NULL REFERENCES "user" (id)
+);
+
 CREATE TABLE IF NOT EXISTS apartment
 (
     id UUID PRIMARY KEY,
     rooms INT NOT NULL,
     seats INT NOT NULL,
-    daily_cost NUMERIC NOT NULL,
+    daily_cost INT NOT NULL,
     type VARCHAR(28) NOT NULL,
     photo VARCHAR UNIQUE NOT NULL
 );
