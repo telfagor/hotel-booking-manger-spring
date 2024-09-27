@@ -23,3 +23,4 @@ public class HibernateUtil {
         return configuration.buildSessionFactory();
     }
 }
+

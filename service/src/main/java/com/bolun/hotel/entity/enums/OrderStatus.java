@@ -1,5 +1,6 @@
 package com.bolun.hotel.entity.enums;
 
-public enum Status {
+public enum OrderStatus {
     IN_PROGRESS, APPROVED, REJECTED, CANCELED
 }
+

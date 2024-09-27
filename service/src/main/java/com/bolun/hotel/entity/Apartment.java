@@ -1,7 +1,14 @@
 package com.bolun.hotel.entity;
 
-import com.bolun.hotel.entity.enums.Type;
-import jakarta.persistence.*;
+import com.bolun.hotel.entity.enums.ApartmentType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,8 +39,9 @@ public class Apartment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 28)
-    private Type type;
+    private ApartmentType apartmentType;
 
     @Column(name = "photo", unique = true, nullable = false, length = 128)
     private String photo;
 }
+

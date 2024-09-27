@@ -1,7 +1,14 @@
 package com.bolun.hotel.entity;
 
-import com.bolun.hotel.entity.enums.Status;
-import jakarta.persistence.*;
+import com.bolun.hotel.entity.enums.OrderStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,5 +40,9 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 64)
-    private Status status;
+    private OrderStatus status;
+
+    private UUID userId;
+    private UUID apartmentId;
 }
+

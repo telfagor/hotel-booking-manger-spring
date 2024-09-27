@@ -1,5 +1,6 @@
 package com.bolun.hotel.entity.enums;
 
-public enum Type {
+public enum ApartmentType {
     STANDARD, LUX
 }
+

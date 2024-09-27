@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS user_detail
     photo VARCHAR(128) UNIQUE,
     birthdate DATE NOT NULL,
     money INT NOT NULL DEFAULT 0,
-    user_id UUID UNIQUE NOT NULL REFERENCES "user" (id)
+    user_id UUID UNIQUE NOT NULL REFERENCES "user" (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS apartment
