@@ -19,7 +19,6 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(UserDetail.class);
         configuration.addAnnotatedClass(Order.class);
         configuration.addAnnotatedClass(Apartment.class);
-        configuration.configure();
 
         return configuration.buildSessionFactory();
     }
