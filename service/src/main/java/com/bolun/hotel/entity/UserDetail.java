@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -27,7 +28,7 @@ public class UserDetail {
     private String photo;
 
     @Column(name = "birthdate", nullable = false)
-    private Birthdate birthdate;
+    private LocalDate birthdate;
 
     @Column(name = "money", nullable = false)
     private Integer money;
