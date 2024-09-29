@@ -4,3 +4,4 @@ public enum ApartmentType {
     STANDARD, LUX
 }
 
+

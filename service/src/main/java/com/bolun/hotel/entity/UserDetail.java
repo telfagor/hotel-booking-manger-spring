@@ -1,20 +1,28 @@
 package com.bolun.hotel.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
+@ToString(exclude = "user")
+@EqualsAndHashCode(of = {"phoneNumber", "user"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -29,7 +37,7 @@ public class UserDetail {
     @Column(name = "phone_number", unique = true, nullable = false, length = 64)
     private String phoneNumber;
 
-    @Column(name = "photo", unique = true, length = 128)
+    @Column(name = "photo", length = 128)
     private String photo;
 
     @Column(name = "birthdate", nullable = false)
@@ -38,6 +46,14 @@ public class UserDetail {
     @Column(name = "money", nullable = false)
     private Integer money;
 
-    private UUID userId;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
+    private User user;
+
+    public void add(User user) {
+        user.setUserDetail(this);
+        this.user = user;
+    }
 }
+
 

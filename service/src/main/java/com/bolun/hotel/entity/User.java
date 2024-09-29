@@ -2,22 +2,32 @@ package com.bolun.hotel.entity;
 
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.Role;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
+@ToString(exclude = {"userDetail", "orders"})
+@EqualsAndHashCode(of = "email")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -48,5 +58,23 @@ public class User {
     @Column(name = "gender", nullable = false, length = 28)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private UserDetail userDetail;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+
+    public void add(UserDetail userDetail) {
+        userDetail.setUser(this);
+        this.userDetail = userDetail;
+    }
+
+    public void add(Order order) {
+        order.setUser(this);
+        this.orders.add(order);
+    }
 }
+
 
