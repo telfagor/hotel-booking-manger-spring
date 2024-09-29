@@ -44,19 +44,20 @@ class AppTestIT {
 
     @AfterEach
     void closeSession() {
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
         session.close();
     }
 
     @Test
     void checkUserDetail() {
-        User user = getUser("telfagor@gmail.com");
-        UserDetail userDetail = getUserDetail("1");
+        User user = getUser();
+        UserDetail userDetail = getUserDetail();
         session.persist(user);
         userDetail.setUserId(user.getId());
         session.persist(userDetail);
         session.flush();
 
+        session.clear();
         UserDetail userDetailActualResult = session.find(UserDetail.class, userDetail.getId());
 
         assertEquals(userDetailActualResult, userDetail);
@@ -64,12 +65,10 @@ class AppTestIT {
 
     @Test
     void checkUser() {
-        User user = getUser("telfagor2@gmail.com");
-        UserDetail userDetail = getUserDetail("2");
+        User user = getUser();
         session.persist(user);
-        userDetail.setUserId(user.getId());
-        session.persist(userDetail);
         session.flush();
+        session.clear();
 
         User userActualResult = session.find(User.class, user.getId());
 
@@ -78,16 +77,22 @@ class AppTestIT {
 
     @Test
     void checkOrder() {
-        User user = getUser("tefagor3@mail.ru");
-        UserDetail userDetail = getUserDetail("3");
-        Apartment apartment = getApartment("path/to/photo.png");
+        User user = getUser();
+        Apartment apartment = getApartment();
         session.persist(user);
-        userDetail.setUserId(user.getId());
-        session.persist(userDetail);
         session.persist(apartment);
+        Order order = getOrder(user, apartment);
+        session.persist(order);
         session.flush();
+        session.clear();
 
-        Order order = Order.builder()
+        Order orderActualResult = session.find(Order.class, order.getId());
+
+        assertEquals(order, orderActualResult);
+    }
+
+    private Order getOrder(User user, Apartment apartment) {
+        return Order.builder()
                 .checkIn(LocalDate.now())
                 .checkOut(LocalDate.now().plusDays(5))
                 .totalCost(250)
@@ -95,41 +100,34 @@ class AppTestIT {
                 .userId(user.getId())
                 .apartmentId(apartment.getId())
                 .build();
-
-        session.persist(order);
-        session.flush();
-
-        Order orderActualResult = session.find(Order.class, order.getId());
-
-        assertEquals(order, orderActualResult);
     }
 
-    private UserDetail getUserDetail(String phoneNumber) {
+    private UserDetail getUserDetail() {
         return UserDetail.builder()
-                .phoneNumber(phoneNumber)
+                .phoneNumber("+743456876")
                 .birthdate(LocalDate.of(1989, 9, 19))
                 .money(2500)
                 .build();
     }
 
-    private User getUser(String email) {
+    private User getUser() {
         return User.builder()
                 .firstName("Igor")
                 .lastName("Vdovicenko")
-                .email(email)
+                .email("test@gmail.com")
                 .password("123")
                 .role(Role.ADMIN)
                 .gender(Gender.MALE)
                 .build();
     }
 
-    private Apartment getApartment(String photo) {
+    private Apartment getApartment() {
         return Apartment.builder()
                 .roomNumber(4)
                 .seatNumber(5)
                 .dailyCost(250)
                 .apartmentType(ApartmentType.STANDARD)
-                .photo(photo)
+                .photo("path/to/photo.png")
                 .build();
     }
 }
