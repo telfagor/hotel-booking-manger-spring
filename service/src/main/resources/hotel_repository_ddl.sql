@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user_detail
 (
     id UUID PRIMARY KEY,
     phone_number VARCHAR(64) UNIQUE NOT NULL,
-    photo VARCHAR(128) UNIQUE,
+    photo VARCHAR(128),
     birthdate DATE NOT NULL,
     money INT NOT NULL DEFAULT 0,
     user_id UUID UNIQUE NOT NULL REFERENCES "user" (id) ON DELETE CASCADE
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS apartment
     seats INT NOT NULL,
     daily_cost INT NOT NULL,
     type VARCHAR(28) NOT NULL,
-    photo VARCHAR(128) UNIQUE NOT NULL
+    photo VARCHAR(128) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "order"
