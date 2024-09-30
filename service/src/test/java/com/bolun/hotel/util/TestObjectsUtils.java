@@ -5,12 +5,10 @@ import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.Role;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass
 public class TestObjectsUtils {
 
-    public User getUser(String email) {
+    public static User getUser(String email) {
         return User.builder()
                 .firstName("Igor")
                 .lastName("Vdovicenko")
@@ -21,7 +19,7 @@ public class TestObjectsUtils {
                 .build();
     }
 
-    public Apartment getApartment() {
+    public static Apartment getApartment() {
         return Apartment.builder()
                 .roomNumber(4)
                 .seatNumber(7)

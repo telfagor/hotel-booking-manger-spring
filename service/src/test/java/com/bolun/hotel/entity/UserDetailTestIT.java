@@ -32,7 +32,6 @@ class UserDetailTestIT extends IntegrationTestBase {
     @Test
     void update() {
         UserDetail userDetail = getUserDetail("1", getUser("test@gmail.com"));
-
         session.persist(userDetail);
         userDetail.setMoney(1000);
 
@@ -47,7 +46,6 @@ class UserDetailTestIT extends IntegrationTestBase {
     @Test
     void shouldFindByIdIfUserDetailExist() {
         UserDetail userDetail = getUserDetail("1", getUser("test@gmail.com"));
-
         session.persist(userDetail);
         session.flush();
         session.clear();
@@ -119,7 +117,6 @@ class UserDetailTestIT extends IntegrationTestBase {
 
         String expectedMessage = "duplicate key value violates unique constraint \"user_detail_phone_number_key\"";
         String actualMessage = ex.getCause().getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage));
     }
 

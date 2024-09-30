@@ -115,7 +115,6 @@ class UserTestIT extends IntegrationTestBase {
 
         String expectedMessage = "duplicate key value violates unique constraint \"user_email_key\"";
         String actualMessage = ex.getCause().getMessage();
-
         assertTrue(actualMessage.contains(expectedMessage));
     }
 }
