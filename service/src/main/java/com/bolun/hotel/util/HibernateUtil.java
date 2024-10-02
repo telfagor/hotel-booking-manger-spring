@@ -13,14 +13,20 @@ import org.hibernate.cfg.Configuration;
 public class HibernateUtil {
 
     public static SessionFactory buildSessionFactory() {
+        Configuration configuration = buildConfiguration();
+
+        return configuration.buildSessionFactory();
+    }
+
+    public static Configuration buildConfiguration() {
         Configuration configuration = new Configuration();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(UserDetail.class);
         configuration.addAnnotatedClass(Order.class);
         configuration.addAnnotatedClass(Apartment.class);
-
-        return configuration.buildSessionFactory();
+        return configuration;
     }
 }
+
 
