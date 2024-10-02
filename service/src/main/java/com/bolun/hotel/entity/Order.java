@@ -1,7 +1,6 @@
 package com.bolun.hotel.entity;
 
 import com.bolun.hotel.entity.enums.OrderStatus;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -48,11 +47,11 @@ public class Order {
     @Column(name = "status", nullable = false, length = 64)
     private OrderStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartment_id", referencedColumnName = "id", nullable = false)
     private Apartment apartment;
 

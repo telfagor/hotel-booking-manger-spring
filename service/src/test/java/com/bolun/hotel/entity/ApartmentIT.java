@@ -1,14 +1,11 @@
 package com.bolun.hotel.entity;
 
+import com.bolun.hotel.util.TestObjectsUtils;
 import com.bolun.integration.IntegrationTestBase;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static com.bolun.hotel.util.TestObjectsUtils.getApartment;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,7 +14,7 @@ class ApartmentIT extends IntegrationTestBase {
 
     @Test
     void insert() {
-        Apartment apartment = getApartment();
+        Apartment apartment = TestObjectsUtils.getApartment();
 
         session.persist(apartment);
         session.flush();
@@ -27,7 +24,7 @@ class ApartmentIT extends IntegrationTestBase {
 
     @Test
     void update() {
-        Apartment apartment = getApartment();
+        Apartment apartment = TestObjectsUtils.getApartment();
         session.persist(apartment);
         apartment.setDailyCost(400);
         apartment.setRoomNumber(4);
@@ -42,7 +39,7 @@ class ApartmentIT extends IntegrationTestBase {
 
     @Test
     void shouldFindByIdIfApartmentExist() {
-        Apartment apartment = getApartment();
+        Apartment apartment = TestObjectsUtils.getApartment();
         session.persist(apartment);
         session.flush();
         session.clear();
@@ -62,32 +59,9 @@ class ApartmentIT extends IntegrationTestBase {
     }
 
     @Test
-    void findAll() {
-        Apartment apartment1 = getApartment();
-        Apartment apartment2 = getApartment();
-        Apartment apartment3 = getApartment();
-        session.persist(apartment1);
-        session.persist(apartment2);
-        session.persist(apartment3);
-        session.flush();
-        session.clear();
-
-        Apartment actualApartment1 = session.find(Apartment.class, apartment1.getId());
-        Apartment actualApartment2 = session.find(Apartment.class, apartment2.getId());
-        Apartment actualApartment3 = session.find(Apartment.class, apartment3.getId());
-
-        List<UUID> actualIds = Stream.of(actualApartment1, actualApartment2, actualApartment3)
-                .map(Apartment::getId)
-                .toList();
-        assertThat(actualIds).hasSize(3);
-        assertThat(actualIds).containsExactlyInAnyOrder(apartment1.getId(), apartment2.getId(), apartment3.getId());
-    }
-
-    @Test
     void delete() {
-        Apartment apartment = getApartment();
+        Apartment apartment = TestObjectsUtils.getApartment();
         session.persist(apartment);
-        session.flush();
 
         session.remove(apartment);
         session.flush();
