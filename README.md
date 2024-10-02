@@ -12,7 +12,7 @@ Actions in the system.
 Add actions:
 - Adding a new simple user to the system.
 - Adding a new apartment to the system.
-- Adding a new order where the apartment and the period of stay are indicated.
+- Adding a new order where the apartment, the user and the period of stay are indicated.
 - Adding additional information about the user if it is missing when creating the order.
 
 Viewing actions:
