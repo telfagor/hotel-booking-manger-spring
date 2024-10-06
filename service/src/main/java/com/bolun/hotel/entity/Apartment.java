@@ -27,7 +27,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "apartment", schema = "hotel_schema", catalog = "hotel_repository")
-public class Apartment {
+public class Apartment implements BaseEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
