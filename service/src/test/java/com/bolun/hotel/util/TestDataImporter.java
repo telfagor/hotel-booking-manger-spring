@@ -8,21 +8,15 @@ import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.entity.enums.Role;
-import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import java.time.LocalDate;
 
 @UtilityClass
 public class TestDataImporter {
 
-    public void importData(SessionFactory sessionFactory) {
-        @Cleanup Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-
+    public void importData(Session session) {
         User andrei = saveUser(session, "Andrei", "Chirtoaca", "andrei@gmail",
                 "123", Role.USER, Gender.MALE);
         User christina = saveUser(session, "Christina", "Aguilera", "christina@gmail.com",
@@ -79,8 +73,6 @@ public class TestDataImporter {
                 2000, OrderStatus.APPROVED);
         Order tudorAgacheOrder3 = saveOrder(session, tudorAgache, apartment2, LocalDate.now(), LocalDate.now().plusDays(6),
                 2000, OrderStatus.APPROVED);
-
-        session.getTransaction().commit();
     }
 
     public User saveUser(Session session,
