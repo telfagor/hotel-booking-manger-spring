@@ -11,19 +11,28 @@ import com.bolun.hotel.entity.enums.Role;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 @UtilityClass
 public class TestObjectsUtils {
+
+    Random random = new Random();
 
     public User getUser(String email) {
         return User.builder()
                 .firstName("Igor")
                 .lastName("Vdovicenko")
                 .email(email)
-                .password("123")
-                .role(Role.ADMIN)
-                .gender(Gender.MALE)
+                .password(String.valueOf(random.nextInt(10)))
+                .role(getRandomEnumValue(Role.class))
+                .gender(getRandomEnumValue(Gender.class))
                 .build();
+    }
+
+    private <T extends Enum<T>> T getRandomEnumValue(Class<T> enumClas) {
+        T[] enumValues = enumClas.getEnumConstants();
+        int randomIndex = random.nextInt(enumValues.length);
+        return enumValues[randomIndex];
     }
 
     public UserDetail getUserDetail(String phoneNumber) {
@@ -31,16 +40,16 @@ public class TestObjectsUtils {
                 .phoneNumber(phoneNumber)
                 .birthdate(LocalDate.now().minusYears(20))
                 .photo("path/to/photo.png")
-                .money(0)
+                .money(random.nextInt(10_000))
                 .build();
     }
 
     public Apartment getApartment() {
         return Apartment.builder()
-                .roomNumber(4)
-                .seatNumber(7)
-                .dailyCost(220)
-                .apartmentType(ApartmentType.STANDARD)
+                .roomNumber(random.nextInt(5) + 1)
+                .seatNumber(random.nextInt(8) + 2)
+                .dailyCost(random.nextInt(1000) + 100)
+                .apartmentType(getRandomEnumValue(ApartmentType.class))
                 .photo("path/to/photo.png")
                 .build();
     }
@@ -49,8 +58,8 @@ public class TestObjectsUtils {
         return Order.builder()
                 .checkIn(LocalDate.now())
                 .checkOut(LocalDate.now().plusDays(2))
-                .totalCost(2000)
-                .status(OrderStatus.IN_PROGRESS)
+                .totalCost(random.nextInt(5000) + 500)
+                .status(getRandomEnumValue(OrderStatus.class))
                 .build();
     }
 }

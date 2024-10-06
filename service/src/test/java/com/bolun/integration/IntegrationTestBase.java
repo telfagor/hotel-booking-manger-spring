@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class IntegrationTestBase {
 
-    private static SessionFactory sessionFactory;
+    protected static SessionFactory sessionFactory;
     protected Session session;
 
     @BeforeAll
