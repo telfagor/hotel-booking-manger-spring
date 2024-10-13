@@ -1,6 +1,7 @@
 package com.bolun.integration;
 
 import com.bolun.hotel.util.HibernateTestUtil;
+import com.bolun.hotel.util.TestDataImporter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -27,6 +28,7 @@ public abstract class IntegrationTestBase {
     void openSession() {
         session = sessionFactory.openSession();
         session.beginTransaction();
+        TestDataImporter.importData(session);
     }
 
     @AfterEach
