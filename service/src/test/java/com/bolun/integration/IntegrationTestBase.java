@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class IntegrationTestBase {
 
-    protected static SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
     protected Session session;
 
     @BeforeAll
@@ -27,8 +27,8 @@ public abstract class IntegrationTestBase {
     @BeforeEach
     void openSession() {
         session = sessionFactory.openSession();
-        TestDataImporter.importData(session);
         session.beginTransaction();
+        TestDataImporter.importData(session);
     }
 
     @AfterEach
