@@ -1,4 +1,4 @@
-package com.bolun.hotel.filter;
+package com.bolun.hotel.integration.filter;
 
 import jakarta.persistence.criteria.Predicate;
 import lombok.Getter;

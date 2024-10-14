@@ -1,8 +1,9 @@
-package com.bolun.hotel.filter;
+package com.bolun.hotel.integration.filter;
 
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.enums.ApartmentType;
-import com.bolun.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.util.TestDataImporter;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,6 +21,7 @@ class QuerydslApartmentFilterTestIT extends IntegrationTestBase {
     @ParameterizedTest
     @MethodSource("getMethodArguments")
     void checkApartmentFilter(ApartmentFilter filter, Integer expectedSize) {
+        TestDataImporter.importData(session);
         Predicate predicate = QuerydslPredicate.builder()
                 .add(filter.getRooms(), apartment.roomNumber::eq)
                 .add(filter.getSeats(), apartment.seatNumber::eq)

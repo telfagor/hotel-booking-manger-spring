@@ -1,9 +1,10 @@
-package com.bolun.hotel.filter;
+package com.bolun.hotel.integration.filter;
 
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.Apartment_;
 import com.bolun.hotel.entity.enums.ApartmentType;
-import com.bolun.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.util.TestDataImporter;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -22,6 +23,7 @@ class CriteriaApartmentFilterTestIT extends IntegrationTestBase {
     @ParameterizedTest
     @MethodSource("getMethodArguments")
     void checkApartmentFilter(ApartmentFilter filter, Integer expectedSize) {
+        TestDataImporter.importData(session);
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Apartment> criteria = cb.createQuery(Apartment.class);
         Root<Apartment> apartmentRoot = criteria.from(Apartment.class);

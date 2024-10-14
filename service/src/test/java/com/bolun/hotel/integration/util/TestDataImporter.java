@@ -1,4 +1,4 @@
-package com.bolun.hotel.util;
+package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.Order;

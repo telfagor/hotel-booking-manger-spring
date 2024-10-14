@@ -1,5 +1,6 @@
-package com.bolun.hotel.util;
+package com.bolun.hotel.integration.util;
 
+import com.bolun.hotel.util.HibernateUtil;
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

@@ -1,4 +1,4 @@
-package com.bolun.hotel.filter;
+package com.bolun.hotel.integration.filter;
 
 import com.bolun.hotel.entity.enums.ApartmentType;
 import lombok.Builder;
