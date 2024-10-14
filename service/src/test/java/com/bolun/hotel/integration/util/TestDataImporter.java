@@ -55,24 +55,33 @@ public class TestDataImporter {
         Order christinaOrder = saveOrder(session, christina, apartment2, LocalDate.now(),
                 LocalDate.now().plusDays(3), 1300, OrderStatus.IN_PROGRESS);
 
-        Order ivanOrder = saveOrder(session, ivan, apartment3, LocalDate.now(), LocalDate.now().plusDays(4),
-                1400, OrderStatus.REJECTED);
-        Order pavelOrder = saveOrder(session, pavel, apartment4, LocalDate.now(), LocalDate.now().plusDays(5),
-                1500, OrderStatus.APPROVED);
-        Order tudorOrder = saveOrder(session, tudor, apartment5, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
-        Order tudorOrder2 = saveOrder(session, tudor, apartment5, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.REJECTED);
-        Order tudorOrder3 = saveOrder(session, tudor, apartment3, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
-        Order tudorOrder4 = saveOrder(session, tudor, apartment5, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
-        Order tudorAgacheOrder1 = saveOrder(session, tudorAgache, apartment1, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
-        Order tudorAgacheOrder2 = saveOrder(session, tudorAgache, apartment2, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
-        Order tudorAgacheOrder3 = saveOrder(session, tudorAgache, apartment2, LocalDate.now(), LocalDate.now().plusDays(6),
-                2000, OrderStatus.APPROVED);
+        Order ivanOrder = saveOrder(session, ivan, apartment1,
+                LocalDate.of(2024, 4, 20),
+                LocalDate.of(2024, 4, 20), 1400, OrderStatus.REJECTED);
+        Order pavelOrder = saveOrder(session, pavel, apartment1,
+                LocalDate.of(2024, 4, 21),
+                LocalDate.of(2024, 4, 22), 1500, OrderStatus.APPROVED);
+        Order tudorOrder = saveOrder(session, tudor, apartment1,
+                LocalDate.of(2024, 4, 24),
+                LocalDate.of(2024, 4, 25), 2000, OrderStatus.APPROVED);
+        Order tudorOrder2 = saveOrder(session, tudor, apartment5,
+                LocalDate.of(2024, 4, 20),
+                LocalDate.of(2024, 4, 26), 2000, OrderStatus.REJECTED);
+        Order tudorOrder3 = saveOrder(session, tudor, apartment3,
+                LocalDate.of(2024, 4, 21),
+                LocalDate.of(2024, 4, 22), 2000, OrderStatus.APPROVED);
+        Order tudorOrder4 = saveOrder(session, tudor, apartment5,
+                LocalDate.of(2024, 5, 7),
+                LocalDate.of(2024, 5, 9), 2000, OrderStatus.APPROVED);
+        Order tudorAgacheOrder1 = saveOrder(session, tudorAgache, apartment1,
+                LocalDate.of(2024, 5, 1),
+                LocalDate.of(2024, 5, 4), 2000, OrderStatus.APPROVED);
+        Order tudorAgacheOrder2 = saveOrder(session, tudorAgache, apartment2,
+                LocalDate.of(2024, 5, 2),
+                LocalDate.of(2024, 5, 3), 2000, OrderStatus.APPROVED);
+        Order tudorAgacheOrder3 = saveOrder(session, tudorAgache, apartment2,
+                LocalDate.of(2024, 5, 5),
+                LocalDate.of(2024, 5, 5), 2000, OrderStatus.APPROVED);
     }
 
     public User saveUser(Session session,

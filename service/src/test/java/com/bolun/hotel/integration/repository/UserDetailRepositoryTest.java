@@ -6,7 +6,6 @@ import com.bolun.hotel.integration.IntegrationTestBase;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.UserDetailRepository;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -19,12 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserDetailRepositoryTest extends IntegrationTestBase {
 
-    private UserDetailRepository userDetailRepository;
-
-    @BeforeEach
-    void init() {
-        userDetailRepository = new UserDetailRepository(session);
-    }
+    private final UserDetailRepository userDetailRepository = new UserDetailRepository(session);
 
     @Test
     void insert() {

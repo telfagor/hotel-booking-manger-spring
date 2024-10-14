@@ -4,7 +4,6 @@ import com.bolun.hotel.entity.User;
 import com.bolun.hotel.integration.IntegrationTestBase;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,12 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserRepositoryTest extends IntegrationTestBase {
 
-    private UserRepository userRepository;
-
-    @BeforeEach
-    void init() {
-        userRepository = new UserRepository(session);
-    }
+    private final UserRepository userRepository = new UserRepository(session);
 
     @Test
     void insert() {

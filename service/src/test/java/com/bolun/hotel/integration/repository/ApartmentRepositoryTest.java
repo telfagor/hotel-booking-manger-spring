@@ -1,27 +1,30 @@
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.entity.Apartment;
+import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.util.TestDataImporter;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.ApartmentRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.bolun.hotel.util.ApartmentFilter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ApartmentRepositoryTest extends IntegrationTestBase {
 
-    private ApartmentRepository apartmentRepository;
-
-    @BeforeEach
-    void init() {
-        apartmentRepository = new ApartmentRepository(session);
-    }
+    private final ApartmentRepository apartmentRepository = new ApartmentRepository(session);
 
     @Test
     void insert() {
@@ -68,18 +71,46 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
         assertThat(actualApartment).isEmpty();
     }
 
-    @Test
-    void findAll() {
-        Apartment apartment1 = apartmentRepository.save(TestObjectsUtils.getApartment());
-        Apartment apartment2 = apartmentRepository.save(TestObjectsUtils.getApartment());
-        Apartment apartment3 = apartmentRepository.save(TestObjectsUtils.getApartment());
+    @ParameterizedTest
+    @MethodSource("getMethodArguments")
+    void checkApartmentFilter(ApartmentFilter filter, Integer expectedSize) {
+        TestDataImporter.importData(session);
 
-        List<Apartment> actualApartments = apartmentRepository.findAll();
+        Map<Apartment, List<LocalDate>> actualApartmentsWithAvailableDays = apartmentRepository.findAll(filter);
 
-        List<UUID> ids = actualApartments.stream()
-                .map(Apartment::getId)
-                .toList();
-        assertThat(ids).containsExactlyInAnyOrder(apartment1.getId(), apartment2.getId(), apartment3.getId());
+        assertThat(actualApartmentsWithAvailableDays).hasSize(expectedSize);
+    }
+
+    static Stream<Arguments> getMethodArguments() {
+        return Stream.of(
+                Arguments.of(
+                        ApartmentFilter.builder()
+                                .rooms(null)
+                                .seats(null)
+                                .dailyCost(null)
+                                .type(null)
+                                .checkIn(LocalDate.of(2024, 4, 20))
+                                .checkOut(LocalDate.of(2024, 4, 26))
+                                .build(), 4),
+                Arguments.of(
+                        ApartmentFilter.builder()
+                                .rooms(2)
+                                .seats(null)
+                                .dailyCost(null)
+                                .type(ApartmentType.STANDARD)
+                                .checkIn(LocalDate.of(2024, 4, 20))
+                                .checkOut(LocalDate.of(2024, 4, 26))
+                                .build(), 1),
+                Arguments.of(
+                        ApartmentFilter.builder()
+                                .rooms(2)
+                                .seats(4)
+                                .dailyCost(null)
+                                .type(ApartmentType.LUX)
+                                .checkIn(LocalDate.of(2024, 4, 20))
+                                .checkOut(LocalDate.of(2024, 4, 26))
+                                .build(), 0)
+        );
     }
 
     @Test

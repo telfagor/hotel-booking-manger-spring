@@ -8,7 +8,6 @@ import com.bolun.hotel.integration.IntegrationTestBase;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.OrderRepository;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -21,12 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OrderRepositoryTest extends IntegrationTestBase {
 
-    private OrderRepository orderRepository;
-
-    @BeforeEach
-    void init() {
-        orderRepository = new OrderRepository(session);
-    }
+    private final OrderRepository orderRepository = new OrderRepository(session);
 
     @Test
     void insert() {
