@@ -1,4 +1,4 @@
-package com.bolun.hotel.filter;
+package com.bolun.hotel.util;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;

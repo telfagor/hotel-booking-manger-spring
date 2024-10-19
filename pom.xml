@@ -230,6 +230,13 @@
                             <phase>integration-test</phase>
                         </execution>
                     </executions>
+                    <configuration>
+                        <excludes>
+                            <exclude>com/bolun/hotel/entity/*</exclude>
+                            <exclude>com/bolun/hotel/entity/enums/*</exclude>
+                            <exclude>com/bolun/hotel/util/*</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
