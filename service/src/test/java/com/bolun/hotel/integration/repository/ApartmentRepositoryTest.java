@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -73,12 +72,12 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
     @ParameterizedTest
     @MethodSource("getMethodArguments")
-    void checkApartmentFilter(ApartmentFilter filter, Integer expectedSize) {
+    void checkApartmentFilter(ApartmentFilter filter, Integer expectedApartmentSize) {
         TestDataImporter.importData(session);
 
-        Map<Apartment, List<LocalDate>> actualApartmentsWithAvailableDays = apartmentRepository.findAll(filter);
+        List<Apartment> actualApartments = apartmentRepository.findAll(filter);
 
-        assertThat(actualApartmentsWithAvailableDays).hasSize(expectedSize);
+        assertThat(actualApartments).hasSize(expectedApartmentSize);
     }
 
     static Stream<Arguments> getMethodArguments() {
@@ -91,25 +90,25 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
                                 .type(null)
                                 .checkIn(LocalDate.of(2024, 4, 20))
                                 .checkOut(LocalDate.of(2024, 4, 26))
-                                .build(), 4),
+                                .build(), 2),
                 Arguments.of(
                         ApartmentFilter.builder()
                                 .rooms(2)
                                 .seats(null)
                                 .dailyCost(null)
-                                .type(ApartmentType.STANDARD)
+                                .type(null)
                                 .checkIn(LocalDate.of(2024, 4, 20))
                                 .checkOut(LocalDate.of(2024, 4, 26))
-                                .build(), 1),
+                                .build(), 0),
                 Arguments.of(
                         ApartmentFilter.builder()
-                                .rooms(2)
-                                .seats(4)
+                                .rooms(3)
+                                .seats(6)
                                 .dailyCost(null)
                                 .type(ApartmentType.LUX)
-                                .checkIn(LocalDate.of(2024, 4, 20))
-                                .checkOut(LocalDate.of(2024, 4, 26))
-                                .build(), 0)
+                                .checkIn(LocalDate.of(2024, 5, 4))
+                                .checkOut(LocalDate.of(2024, 5, 5))
+                                .build(), 1)
         );
     }
 

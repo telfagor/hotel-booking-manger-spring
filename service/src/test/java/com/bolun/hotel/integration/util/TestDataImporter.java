@@ -57,10 +57,10 @@ public class TestDataImporter {
 
         Order ivanOrder = saveOrder(session, ivan, apartment1,
                 LocalDate.of(2024, 4, 20),
-                LocalDate.of(2024, 4, 20), 1400, OrderStatus.REJECTED);
+                LocalDate.of(2024, 4, 21), 1400, OrderStatus.REJECTED);
         Order pavelOrder = saveOrder(session, pavel, apartment1,
-                LocalDate.of(2024, 4, 21),
-                LocalDate.of(2024, 4, 22), 1500, OrderStatus.APPROVED);
+                LocalDate.of(2024, 4, 22),
+                LocalDate.of(2024, 4, 23), 1500, OrderStatus.APPROVED);
         Order tudorOrder = saveOrder(session, tudor, apartment1,
                 LocalDate.of(2024, 4, 24),
                 LocalDate.of(2024, 4, 25), 2000, OrderStatus.APPROVED);
@@ -80,8 +80,8 @@ public class TestDataImporter {
                 LocalDate.of(2024, 5, 2),
                 LocalDate.of(2024, 5, 3), 2000, OrderStatus.APPROVED);
         Order tudorAgacheOrder3 = saveOrder(session, tudorAgache, apartment2,
-                LocalDate.of(2024, 5, 5),
-                LocalDate.of(2024, 5, 5), 2000, OrderStatus.APPROVED);
+                LocalDate.of(2024, 5, 7),
+                LocalDate.of(2024, 5, 10), 2000, OrderStatus.APPROVED);
     }
 
     public User saveUser(Session session,
