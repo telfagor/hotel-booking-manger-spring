@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserDetailRepositoryTest extends IntegrationTestBase {
 
-    private final UserDetailRepository userDetailRepository = new UserDetailRepository(session);
+    private final UserDetailRepository userDetailRepository =
+            applicationContext.getBean("userDetailRepository", UserDetailRepository.class);
 
     @Test
     void insert() {

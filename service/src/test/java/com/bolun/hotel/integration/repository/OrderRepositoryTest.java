@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class OrderRepositoryTest extends IntegrationTestBase {
 
-    private final OrderRepository orderRepository = new OrderRepository(session);
+    private final OrderRepository orderRepository =
+            applicationContext.getBean("orderRepository", OrderRepository.class);
 
     @Test
     void insert() {
