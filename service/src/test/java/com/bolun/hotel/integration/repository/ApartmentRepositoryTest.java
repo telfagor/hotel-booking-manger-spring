@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ApartmentRepositoryTest extends IntegrationTestBase {
 
     private final ApartmentRepository apartmentRepository =
-            applicationContext.getBean("apartmentRepository", ApartmentRepository.class);
+            applicationContext.getBean(ApartmentRepository.class);
 
     @Test
     void insert() {

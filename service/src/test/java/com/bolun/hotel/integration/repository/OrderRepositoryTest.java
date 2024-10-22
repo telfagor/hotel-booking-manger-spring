@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class OrderRepositoryTest extends IntegrationTestBase {
 
     private final OrderRepository orderRepository =
-            applicationContext.getBean("orderRepository", OrderRepository.class);
+            applicationContext.getBean(OrderRepository.class);
 
     @Test
     void insert() {

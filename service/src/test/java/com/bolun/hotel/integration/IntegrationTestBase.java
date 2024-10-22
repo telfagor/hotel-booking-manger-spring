@@ -25,7 +25,7 @@ public abstract class IntegrationTestBase {
 
     @BeforeEach
     void openSession() {
-        session = applicationContext.getBean("session", Session.class);
+        session = applicationContext.getBean(Session.class);
         session.getTransaction().begin();
     }
 

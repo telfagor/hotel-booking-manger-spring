@@ -7,7 +7,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -20,7 +19,6 @@ import static com.bolun.hotel.entity.QOrder.order;
 @Repository
 public class ApartmentRepository extends AbstractRepository<UUID, Apartment> {
 
-    @Autowired
     public ApartmentRepository(EntityManager entityManager) {
         super(entityManager, Apartment.class);
     }
