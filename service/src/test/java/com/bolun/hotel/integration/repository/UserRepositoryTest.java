@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class UserRepositoryTest extends IntegrationTestBase {
 
-    private final UserRepository userRepository = new UserRepository(session);
+    private final UserRepository userRepository
+            = applicationContext.getBean(UserRepository.class);
 
     @Test
     void insert() {

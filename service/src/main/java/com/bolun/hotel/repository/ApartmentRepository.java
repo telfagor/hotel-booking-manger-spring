@@ -7,6 +7,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import static com.bolun.hotel.entity.QApartment.apartment;
 import static com.bolun.hotel.entity.QOrder.order;
 
+@Repository
 public class ApartmentRepository extends AbstractRepository<UUID, Apartment> {
 
     public ApartmentRepository(EntityManager entityManager) {

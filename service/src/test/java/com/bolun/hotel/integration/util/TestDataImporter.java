@@ -8,6 +8,7 @@ import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.entity.enums.Role;
+import jakarta.persistence.EntityManager;
 import lombok.experimental.UtilityClass;
 import org.hibernate.Session;
 
@@ -84,7 +85,7 @@ public class TestDataImporter {
                 LocalDate.of(2024, 5, 10), 2000, OrderStatus.APPROVED);
     }
 
-    public User saveUser(Session session,
+    public User saveUser(EntityManager session,
                          String firstName,
                          String lastName,
                          String email,
