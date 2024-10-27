@@ -2,8 +2,10 @@ package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.annotation.IT;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,10 +15,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@IT
+@RequiredArgsConstructor
 class UserRepositoryTest extends IntegrationTestBase {
 
-    private final UserRepository userRepository
-            = applicationContext.getBean(UserRepository.class);
+    private final UserRepository userRepository;
 
     @Test
     void insert() {

@@ -1,5 +1,6 @@
 package com.bolun.hotel.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "user_detail", schema = "hotel_schema", catalog = "hotel_repository")
-public class UserDetail implements BaseEntity<UUID> {
+public class UserDetail extends AuditableEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,7 +46,7 @@ public class UserDetail implements BaseEntity<UUID> {
     @Column(name = "money", nullable = false)
     private Integer money;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
 

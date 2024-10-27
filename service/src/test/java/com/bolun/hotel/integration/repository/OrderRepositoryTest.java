@@ -5,8 +5,10 @@ import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.annotation.IT;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -18,10 +20,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@IT
+@RequiredArgsConstructor
 class OrderRepositoryTest extends IntegrationTestBase {
 
-    private final OrderRepository orderRepository =
-            applicationContext.getBean(OrderRepository.class);
+    private final OrderRepository orderRepository;
 
     @Test
     void insert() {

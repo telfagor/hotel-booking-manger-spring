@@ -3,10 +3,12 @@ package com.bolun.hotel.integration.repository;
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.annotation.IT;
 import com.bolun.hotel.integration.util.TestDataImporter;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.ApartmentRepository;
 import com.bolun.hotel.util.ApartmentFilter;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,10 +23,11 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@IT
+@RequiredArgsConstructor
 class ApartmentRepositoryTest extends IntegrationTestBase {
 
-    private final ApartmentRepository apartmentRepository =
-            applicationContext.getBean(ApartmentRepository.class);
+    private final ApartmentRepository apartmentRepository;
 
     @Test
     void insert() {
