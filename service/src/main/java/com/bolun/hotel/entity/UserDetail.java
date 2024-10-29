@@ -1,6 +1,5 @@
 package com.bolun.hotel.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 @Data
 @ToString(exclude = "user")
-@EqualsAndHashCode(of = {"phoneNumber", "user"})
+@EqualsAndHashCode(of = "phoneNumber")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -46,7 +45,7 @@ public class UserDetail extends AuditableEntity<UUID> {
     @Column(name = "money", nullable = false)
     private Integer money;
 
-    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
 

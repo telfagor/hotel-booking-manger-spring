@@ -3,11 +3,9 @@ package com.bolun.hotel.integration.repository;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.UserDetail;
 import com.bolun.hotel.integration.IntegrationTestBase;
-import com.bolun.hotel.integration.annotation.IT;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.UserDetailRepository;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -18,7 +16,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@IT
 @RequiredArgsConstructor
 class UserDetailRepositoryTest extends IntegrationTestBase {
 
@@ -94,7 +91,6 @@ class UserDetailRepositoryTest extends IntegrationTestBase {
         assertThat(actualUserDetail).isEmpty();
     }
 
-    @NotNull
     private UserDetail getUserDetail(String email, String phoneNumber) {
         User user = TestObjectsUtils.getUser(email);
         UserDetail userDetail = TestObjectsUtils.getUserDetail(phoneNumber);

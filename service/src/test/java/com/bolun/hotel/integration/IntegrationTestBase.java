@@ -1,10 +1,31 @@
 package com.bolun.hotel.integration;
 
+import com.bolun.hotel.integration.annotation.IT;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
+@IT
 public abstract class IntegrationTestBase {
+
+    protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17")
+            .withInitScript("init.sql");
+
+    static {
+        postgres.start();
+    }
+
     @PersistenceContext
     protected Session session;
+
+    @DynamicPropertySource
+    static void configureTestcontainers(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+    }
 }
 

@@ -1,8 +1,8 @@
 package com.bolun.hotel.integration.annotation;
 
-import jakarta.transaction.Transactional;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
