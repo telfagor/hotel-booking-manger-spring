@@ -2,6 +2,7 @@ package com.bolun.hotel.entity;
 
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.Role;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,7 +33,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "\"user\"", schema = "hotel_schema", catalog = "hotel_repository")
-public class User implements BaseEntity<UUID> {
+public class User extends AuditableEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -58,7 +59,7 @@ public class User implements BaseEntity<UUID> {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserDetail userDetail;
 
     @Builder.Default

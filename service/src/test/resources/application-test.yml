@@ -1,0 +1,5 @@
+# Hibernate settings
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

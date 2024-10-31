@@ -7,7 +7,7 @@ import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.integration.IntegrationTestBase;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.OrderRepository;
-import org.jetbrains.annotations.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -18,10 +18,10 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@RequiredArgsConstructor
 class OrderRepositoryTest extends IntegrationTestBase {
 
-    private final OrderRepository orderRepository =
-            applicationContext.getBean(OrderRepository.class);
+    private final OrderRepository orderRepository;
 
     @Test
     void insert() {
@@ -92,7 +92,6 @@ class OrderRepositoryTest extends IntegrationTestBase {
         assertThat(actualOrder).isEmpty();
     }
 
-    @NotNull
     private Order getOrder(String email) {
         User user = TestObjectsUtils.getUser(email);
         Apartment apartment = TestObjectsUtils.getApartment();

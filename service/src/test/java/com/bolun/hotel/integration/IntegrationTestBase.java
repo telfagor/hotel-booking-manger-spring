@@ -1,37 +1,31 @@
 package com.bolun.hotel.integration;
 
-import com.bolun.hotel.integration.config.IntegrationTestApplicationConfig;
+import com.bolun.hotel.integration.annotation.IT;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
+@IT
 public abstract class IntegrationTestBase {
 
-    protected static AnnotationConfigApplicationContext applicationContext;
+    protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17")
+            .withInitScript("init.sql");
+
+    static {
+        postgres.start();
+    }
+
+    @PersistenceContext
     protected Session session;
 
-    @BeforeAll
-    static void createApplicationContext() {
-        applicationContext = new AnnotationConfigApplicationContext(IntegrationTestApplicationConfig.class);
-    }
-
-    @AfterAll
-    static void closeApplicationContext() {
-        applicationContext.close();
-    }
-
-    @BeforeEach
-    void openSession() {
-        session = applicationContext.getBean(Session.class);
-        session.getTransaction().begin();
-    }
-
-    @AfterEach
-    void closeSession() {
-        session.getTransaction().rollback();
+    @DynamicPropertySource
+    static void configureTestcontainers(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
     }
 }
 

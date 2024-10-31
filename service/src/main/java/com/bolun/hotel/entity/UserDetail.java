@@ -21,13 +21,13 @@ import java.util.UUID;
 
 @Data
 @ToString(exclude = "user")
-@EqualsAndHashCode(of = {"phoneNumber", "user"})
+@EqualsAndHashCode(of = "phoneNumber")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "user_detail", schema = "hotel_schema", catalog = "hotel_repository")
-public class UserDetail implements BaseEntity<UUID> {
+public class UserDetail extends AuditableEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

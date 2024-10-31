@@ -28,7 +28,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "\"order\"", schema = "hotel_schema", catalog = "hotel_repository")
-public class Order implements BaseEntity<UUID> {
+public class Order extends AuditableEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
