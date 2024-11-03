@@ -1,16 +1,13 @@
 package com.bolun.hotel.repository;
 
 import com.bolun.hotel.entity.UserDetail;
-import jakarta.persistence.EntityManager;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public class UserDetailRepository extends AbstractRepository<UUID, UserDetail> {
+public interface UserDetailRepository extends JpaRepository<UserDetail, UUID> {
 
-    public UserDetailRepository(EntityManager entityManager) {
-        super(entityManager, UserDetail.class);
-    }
 }
 

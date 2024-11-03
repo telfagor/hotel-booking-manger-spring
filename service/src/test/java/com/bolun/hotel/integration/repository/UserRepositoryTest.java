@@ -14,7 +14,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @RequiredArgsConstructor
 class UserRepositoryTest extends IntegrationTestBase {
 
@@ -35,7 +34,7 @@ class UserRepositoryTest extends IntegrationTestBase {
         user.setFirstName("Andrei");
         user.setLastName("Bolun");
 
-        userRepository.update(user);
+        userRepository.saveAndFlush(user);
         session.clear();
         Optional<User> actualUser = userRepository.findById(user.getId());
 
@@ -46,7 +45,7 @@ class UserRepositoryTest extends IntegrationTestBase {
 
     @Test
     void shouldFindById() {
-        User user = userRepository.save(TestObjectsUtils.getUser("test@gmail.com"));
+        User user = userRepository.saveAndFlush(TestObjectsUtils.getUser("test@gmail.com"));
         session.clear();
 
         Optional<User> actualUser = userRepository.findById(user.getId());

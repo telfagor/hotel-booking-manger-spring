@@ -15,6 +15,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "apartment", schema = "hotel_schema", catalog = "hotel_repository")
-public class Apartment extends AuditableEntity<UUID> {
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+public class Apartment extends AuditingEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -49,6 +53,7 @@ public class Apartment extends AuditableEntity<UUID> {
     @Column(name = "photo", nullable = false, length = 128)
     private String photo;
 
+    @NotAudited
     @Builder.Default
     @OneToMany(mappedBy = "apartment")
     private List<Order> orders = new ArrayList<>();

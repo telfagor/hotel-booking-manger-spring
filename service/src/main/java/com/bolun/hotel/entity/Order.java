@@ -17,6 +17,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -28,7 +31,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "\"order\"", schema = "hotel_schema", catalog = "hotel_repository")
-public class Order extends AuditableEntity<UUID> {
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+public class Order extends AuditingEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,10 +51,12 @@ public class Order extends AuditableEntity<UUID> {
     @Column(name = "status", nullable = false, length = 64)
     private OrderStatus status;
 
+    @NotAudited
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
+    @NotAudited
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartment_id", referencedColumnName = "id", nullable = false)
     private Apartment apartment;
