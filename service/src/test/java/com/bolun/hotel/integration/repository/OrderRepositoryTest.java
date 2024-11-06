@@ -38,7 +38,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
         order.setCheckOut(LocalDate.now().plusDays(1));
         order.setStatus(OrderStatus.APPROVED);
 
-        orderRepository.update(order);
+        orderRepository.saveAndFlush(order);
         session.clear();
         Optional<Order> actualOrder = orderRepository.findById(order.getId());
 
@@ -49,7 +49,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
 
     @Test
     void shouldFindById() {
-        Order order = orderRepository.save(getOrder("test@gmail.com"));
+        Order order = orderRepository.saveAndFlush(getOrder("test@gmail.com"));
         session.clear();
 
         Optional<Order> actualOrder = orderRepository.findById(order.getId());

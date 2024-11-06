@@ -15,6 +15,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -27,7 +30,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "user_detail", schema = "hotel_schema", catalog = "hotel_repository")
-public class UserDetail extends AuditableEntity<UUID> {
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+public class UserDetail extends AuditingEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,6 +49,7 @@ public class UserDetail extends AuditableEntity<UUID> {
     @Column(name = "money", nullable = false)
     private Integer money;
 
+    @NotAudited
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;

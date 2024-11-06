@@ -6,6 +6,10 @@ spring:
     password: pass
     driver-class-name: org.postgresql.Driver
 
+# Liquibase connection settings
+  liquibase:
+    default-schema: hotel_schema
+
 # Hibernate settings
   jpa:
     show-sql: true
@@ -15,8 +19,7 @@ spring:
 # Logger settings
 logging:
   level:
-    root: WARN
-    com.bolun.hotel.repository.AbstractRepository: INFO
+    root: INFO
   file:
     name: hotel.log
     path: /

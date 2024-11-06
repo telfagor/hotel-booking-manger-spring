@@ -1,5 +1,14 @@
-# Hibernate settings
+# Test connection settings
 spring:
+  datasource:
+    username: test
+    password: test
+
+# Hibernate settings
   jpa:
-    hibernate:
-      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+

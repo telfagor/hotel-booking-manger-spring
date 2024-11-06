@@ -42,7 +42,7 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
         apartment.setRoomNumber(1);
         apartment.setSeatNumber(4);
 
-        apartmentRepository.update(apartment);
+        apartmentRepository.saveAndFlush(apartment);
         session.clear();
         Optional<Apartment> actualApartment = apartmentRepository.findById(apartment.getId());
 
@@ -53,7 +53,7 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
     @Test
     void shouldFindById() {
-        Apartment apartment = apartmentRepository.save(TestObjectsUtils.getApartment());
+        Apartment apartment = apartmentRepository.saveAndFlush(TestObjectsUtils.getApartment());
         session.clear();
 
         Optional<Apartment> actualApartment = apartmentRepository.findById(apartment.getId());

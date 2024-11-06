@@ -20,6 +20,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +36,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "\"user\"", schema = "hotel_schema", catalog = "hotel_repository")
-public class User extends AuditableEntity<UUID> {
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+public class User extends AuditingEntity<UUID> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -59,9 +63,11 @@ public class User extends AuditableEntity<UUID> {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @NotAudited
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserDetail userDetail;
 
+    @NotAudited
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();

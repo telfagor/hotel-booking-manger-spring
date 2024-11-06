@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset bolun:create-user-table-v1
 CREATE TABLE IF NOT EXISTS "user"
 (
     id UUID PRIMARY KEY,
@@ -6,11 +9,11 @@ CREATE TABLE IF NOT EXISTS "user"
     email VARCHAR(64) UNIQUE NOT NULL,
     password VARCHAR(128) NOT NULL,
     role VARCHAR(28) NOT NULL DEFAULT 'USER',
-    gender VARCHAR(28) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    created_by VARCHAR(64) NOT NULL
+    gender VARCHAR(28) NOT NULL
 );
+--rollback DROP TABLE "user";
 
+--changeset bolun:create-user_detail-table-v1
 CREATE TABLE IF NOT EXISTS user_detail
 (
     id UUID PRIMARY KEY,
@@ -18,11 +21,11 @@ CREATE TABLE IF NOT EXISTS user_detail
     photo VARCHAR(128),
     birthdate DATE NOT NULL,
     money INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL,
-    created_by VARCHAR(64) NOT NULL,
     user_id UUID UNIQUE NOT NULL REFERENCES "user" (id) ON DELETE CASCADE
 );
+--rollback DROP TABLE user_detail;
 
+--changeset bolun:create-apartment-table-v1
 CREATE TABLE IF NOT EXISTS apartment
 (
     id UUID PRIMARY KEY,
@@ -30,11 +33,11 @@ CREATE TABLE IF NOT EXISTS apartment
     seats INT NOT NULL,
     daily_cost INT NOT NULL,
     type VARCHAR(28) NOT NULL,
-    photo VARCHAR(128) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    created_by VARCHAR(64) NOT NULL
+    photo VARCHAR(128) NOT NULL
 );
+--rollback DROP TABLE apartment;
 
+--changeset bolun:create-order-table-v1
 CREATE TABLE IF NOT EXISTS "order"
 (
     id UUID PRIMARY KEY,
@@ -42,33 +45,28 @@ CREATE TABLE IF NOT EXISTS "order"
     check_out DATE NOT NULL,
     total_cost INT NOT NULL,
     status VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    created_by VARCHAR(64) NOT NULL,
     user_id UUID NOT NULL REFERENCES "user" (id),
     apartment_id UUID NOT NULL REFERENCES apartment (id)
 );
+--rollback DROP TABLE "order";
 
-
-CREATE UNIQUE INDEX user_email_idx ON "user" (email);
-
-CREATE INDEX user_password_idx ON "user" (password);
-
-CREATE INDEX user_role_idx ON "user" (role);
-
+--changeset bolun:create-apartment-price-index-v1
 CREATE INDEX apartment_price_idx ON apartment (daily_cost);
+--rollback DROP INDEX apartment_price_idx;
 
+--changeset bolun:create-apartment-type-index-v1
 CREATE INDEX apartment_type_idx ON apartment (type);
+--rollback DROP INDEX apartment_type_idx;
 
+--changeset bolun:create-apartment-rooms-index-v1
 CREATE INDEX rooms_idx ON apartment (rooms);
+--rollback DROP INDEX rooms_idx;
 
+--changeset bolun:create-apartment-seats-index-v1
 CREATE INDEX seats_idx ON apartment (seats);
+--rollback DROP INDEX seats_idx;
 
+--changeset bolun:create-apartment-status-index-v1
 CREATE INDEX status_idx ON "order" (status);
-
-CREATE INDEX user_id_idx ON "order" (user_id);
-
-
-
-
-
+--rollback DROP INDEX status_idx;
 

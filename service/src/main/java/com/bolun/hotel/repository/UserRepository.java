@@ -1,16 +1,15 @@
 package com.bolun.hotel.repository;
 
 import com.bolun.hotel.entity.User;
-import jakarta.persistence.EntityManager;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public class UserRepository extends AbstractRepository<UUID, User> {
+public interface UserRepository extends JpaRepository<User, UUID>,
+        RevisionRepository<User, UUID, Integer> {
 
-    public UserRepository(EntityManager entityManager) {
-        super(entityManager, User.class);
-    }
 }
 

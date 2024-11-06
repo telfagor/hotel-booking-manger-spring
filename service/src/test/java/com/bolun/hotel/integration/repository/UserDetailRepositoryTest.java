@@ -36,7 +36,7 @@ class UserDetailRepositoryTest extends IntegrationTestBase {
         userDetail.setMoney(1500);
         userDetail.setBirthdate(LocalDate.now().minusYears(10));
 
-        userDetailRepository.update(userDetail);
+        userDetailRepository.saveAndFlush(userDetail);
         session.clear();
         Optional<UserDetail> actualUserDetail = userDetailRepository.findById(userDetail.getId());
 
