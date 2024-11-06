@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset bolun:1
+--changeset bolun:create-user-table-v1
 CREATE TABLE IF NOT EXISTS "user"
 (
     id UUID PRIMARY KEY,
@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS "user"
     role VARCHAR(28) NOT NULL DEFAULT 'USER',
     gender VARCHAR(28) NOT NULL
 );
---DROP TABLE "user";
+--rollback DROP TABLE "user";
 
---changeset bolun:2
+--changeset bolun:create-user_detail-table-v1
 CREATE TABLE IF NOT EXISTS user_detail
 (
     id UUID PRIMARY KEY,
@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS user_detail
     money INT NOT NULL DEFAULT 0,
     user_id UUID UNIQUE NOT NULL REFERENCES "user" (id) ON DELETE CASCADE
 );
---DROP TABLE user_detail;
+--rollback DROP TABLE user_detail;
 
---changeset bolun:3
+--changeset bolun:create-apartment-table-v1
 CREATE TABLE IF NOT EXISTS apartment
 (
     id UUID PRIMARY KEY,
@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS apartment
     type VARCHAR(28) NOT NULL,
     photo VARCHAR(128) NOT NULL
 );
---DROP TABLE apartment;
+--rollback DROP TABLE apartment;
 
---changeset bolun:4
+--changeset bolun:create-order-table-v1
 CREATE TABLE IF NOT EXISTS "order"
 (
     id UUID PRIMARY KEY,
@@ -48,22 +48,25 @@ CREATE TABLE IF NOT EXISTS "order"
     user_id UUID NOT NULL REFERENCES "user" (id),
     apartment_id UUID NOT NULL REFERENCES apartment (id)
 );
---DROP TABLE "order";
+--rollback DROP TABLE "order";
 
-CREATE UNIQUE INDEX user_email_idx ON "user" (email);
-
-CREATE INDEX user_password_idx ON "user" (password);
-
-CREATE INDEX user_role_idx ON "user" (role);
-
+--changeset bolun:create-apartment-price-index-v1
 CREATE INDEX apartment_price_idx ON apartment (daily_cost);
+--rollback DROP INDEX apartment_price_idx;
 
+--changeset bolun:create-apartment-type-index-v1
 CREATE INDEX apartment_type_idx ON apartment (type);
+--rollback DROP INDEX apartment_type_idx;
 
+--changeset bolun:create-apartment-rooms-index-v1
 CREATE INDEX rooms_idx ON apartment (rooms);
+--rollback DROP INDEX rooms_idx;
 
+--changeset bolun:create-apartment-seats-index-v1
 CREATE INDEX seats_idx ON apartment (seats);
+--rollback DROP INDEX seats_idx;
 
+--changeset bolun:create-apartment-status-index-v1
 CREATE INDEX status_idx ON "order" (status);
+--rollback DROP INDEX status_idx;
 
-CREATE INDEX user_id_idx ON "order" (user_id);

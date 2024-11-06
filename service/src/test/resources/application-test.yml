@@ -3,7 +3,12 @@ spring:
   datasource:
     username: test
     password: test
+
+# Hibernate settings
   jpa:
-    properties.hibernate:
-      hbm2ddl.auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
 

@@ -31,4 +31,8 @@ public class QuerydslPredicate {
     public Predicate buildAnd() {
         return ExpressionUtils.allOf(predicates);
     }
+
+    public Predicate buildOr() {
+        return ExpressionUtils.anyOf(predicates);
+    }
 }

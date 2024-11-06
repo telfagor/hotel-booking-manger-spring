@@ -29,5 +29,5 @@ public abstract class AuditingEntity<T extends Serializable> implements BaseEnti
     private String createdBy;
 
     @LastModifiedBy
-    private String lastModifiedBy;
+    private String modifiedBy;
 }
