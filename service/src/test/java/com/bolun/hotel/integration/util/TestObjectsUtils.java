@@ -1,5 +1,7 @@
 package com.bolun.hotel.integration.util;
 
+import com.bolun.hotel.dto.UserCreateEditDto;
+import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
@@ -61,6 +63,39 @@ public class TestObjectsUtils {
                 .totalCost(random.nextInt(5000) + 500)
                 .status(getRandomEnumValue(OrderStatus.class))
                 .build();
+    }
+
+    public UserReadDto getGetUserReadDto1() {
+        return new UserReadDto(
+                null,
+                "John",
+                "Doe",
+                "john@example.com",
+                Gender.MALE,
+                Role.USER,
+                null);
+    }
+
+   public UserReadDto getGetUserReadDto2() {
+        return new UserReadDto(
+                null,
+                "Jane",
+                "Doe",
+                "jane@example.com",
+                Gender.FEMALE,
+                Role.USER,
+                null);
+   }
+
+   public UserCreateEditDto getUserCreateEditDto() {
+        return new UserCreateEditDto(
+                "test",
+                "test",
+                "test",
+                "test",
+                "test",
+                Gender.MALE
+        );
     }
 }
 

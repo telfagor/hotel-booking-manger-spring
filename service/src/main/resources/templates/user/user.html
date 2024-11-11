@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <link href="/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center"
+        th:text="|User Profile for ${user.firstName} ${user.lastName}|"></h2>
+
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Personal Information</h5>
+        </div>
+        <div class="card-body">
+            <p><strong th:text="|Email: ${user.email}|"></strong></p>
+            <p><strong th:text="|Role: ${user.role}|"></strong></p>
+            <p><strong th:text="|Gender: ${user.gender}|"></strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center ">
+    <a th:href="@{/users/{id}/update(id=${user.id})}" class="btn btn-primary mx-2">Edit</a>
+
+    <form th:action="@{/users/{id}(id=${user.id})}" th:method="DELETE" style="display: inline;">
+        <button type="submit" class="btn btn-danger mx-2">Delete</button>
+    </form>
+</div>
+</body>
+
+<script src="/bootstrap.min.js"></script>
+</html>

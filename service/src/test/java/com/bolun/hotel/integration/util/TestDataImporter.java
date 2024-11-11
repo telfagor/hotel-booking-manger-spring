@@ -32,13 +32,13 @@ public class TestDataImporter {
                 "456", Role.USER, Gender.MALE);
 
         UserDetail andreiUserDetail = saveUserDetail(session, andrei, "1",
-                LocalDate.now().minusYears(20), 1000);
+                LocalDate.now().minusYears(20), 300);
         UserDetail christinaUserDetail = saveUserDetail(session, christina, "2",
-                LocalDate.now().minusYears(20), 1000);
+                LocalDate.now().minusYears(20), 700);
         UserDetail ivanUserDetail = saveUserDetail(session, ivan, "3",
                 LocalDate.now().minusYears(22), 1000);
         UserDetail pavelUserDetail = saveUserDetail(session, pavel, "4",
-                LocalDate.now().minusYears(23), 1000);
+                LocalDate.now().minusYears(23), 1100);
         UserDetail tudorUserDetail = saveUserDetail(session, tudor, "5",
                 LocalDate.now().minusYears(24), 1000);
         UserDetail tudorAgacheUserDetail = saveUserDetail(session, tudorAgache, "6",
