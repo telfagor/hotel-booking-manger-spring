@@ -7,7 +7,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.envers.repository.config.EnableEnversRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import static java.util.Optional.of;
+import java.util.Optional;
 
 @Configuration
 @EnableEnversRepositories(basePackageClasses = HotelRunner.class)
@@ -16,6 +16,6 @@ public class AuditConfiguration {
 
     @Bean
     public AuditorAware<String> auditorAware() {
-        return () -> of("andrei");
+        return () -> Optional.of("andrei");
     }
 }

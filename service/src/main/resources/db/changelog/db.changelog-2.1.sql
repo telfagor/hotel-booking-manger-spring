@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS apartment_aud
     id BIGINT,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    username VARCHAR(64) NOT NULL UNIQUE,
+    username VARCHAR(64),
     birth_date DATE,
     firstname VARCHAR(64),
     lastname VARCHAR(64),
@@ -27,12 +27,12 @@ CREATE TABLE IF NOT EXISTS user_aud (
     id UUID,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    first_name VARCHAR(64) NOT NULL,
-    last_name VARCHAR(64) NOT NULL,
-    email VARCHAR(64) UNIQUE NOT NULL,
-    password VARCHAR(128) NOT NULL,
-    role VARCHAR(28) NOT NULL,
-    gender VARCHAR(28) NOT NULL
+    first_name VARCHAR(64),
+    last_name VARCHAR(64),
+    email VARCHAR(64),
+    password VARCHAR(128),
+    role VARCHAR(28),
+    gender VARCHAR(28)
 );
 --rollback DROP TABLE user_aud;
 
@@ -41,11 +41,11 @@ CREATE TABLE IF NOT EXISTS user_detail_aud (
     id UUID,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    phone_number VARCHAR(64) UNIQUE NOT NULL,
+    phone_number VARCHAR(64),
     photo VARCHAR(128),
-    birthdate DATE NOT NULL,
-    money INT NOT NULL DEFAULT 0,
-    user_id UUID REFERENCES "user" (id) ON DELETE CASCADE
+    birthdate DATE,
+    money INT DEFAULT 0,
+    user_id UUID
 );
 --rollback DROP TABLE user_detail_aud;
 
@@ -54,11 +54,11 @@ CREATE TABLE IF NOT EXISTS order_aud (
     id UUID,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    check_in DATE NOT NULL,
-    check_out DATE NOT NULL,
-    total_cost INT NOT NULL,
-    status VARCHAR(64) NOT NULL,
-    user_id UUID REFERENCES "user" (id),
-    apartment_id UUID REFERENCES apartment (id)
+    check_in DATE,
+    check_out DATE,
+    total_cost INT,
+    status VARCHAR(64),
+    user_id UUID,
+    apartment_id UUID
 );
 --rollback DROP TABLE order_aud;

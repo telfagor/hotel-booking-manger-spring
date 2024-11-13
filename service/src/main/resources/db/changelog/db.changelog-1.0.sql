@@ -70,3 +70,14 @@ CREATE INDEX seats_idx ON apartment (seats);
 CREATE INDEX status_idx ON "order" (status);
 --rollback DROP INDEX status_idx;
 
+--changeset bolun:create-user-detail-user-id-index-v1
+CREATE INDEX user_detail_user_id_idx ON user_detail (user_id);
+--rollback DROP INDEX user_detail_user_id_idx;
+
+--changeset bolun:create-order-user-id-index-v1
+CREATE INDEX order_user_id_idx ON "order" (user_id);
+--rollback DROP INDEX order_user_id_idx;
+
+--changeset bolun:create-apartment-id-index-v1
+CREATE INDEX order_apartment_id_idx ON "order" (apartment_id);
+--rollback DROP INDEX order_apartment_id_idx;

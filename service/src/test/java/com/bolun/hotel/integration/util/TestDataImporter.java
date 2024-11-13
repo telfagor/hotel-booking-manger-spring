@@ -32,13 +32,13 @@ public class TestDataImporter {
                 "456", Role.USER, Gender.MALE);
 
         UserDetail andreiUserDetail = saveUserDetail(session, andrei, "1",
-                LocalDate.now().minusYears(20), 1000);
+                LocalDate.now().minusYears(20), 300);
         UserDetail christinaUserDetail = saveUserDetail(session, christina, "2",
-                LocalDate.now().minusYears(20), 1000);
+                LocalDate.now().minusYears(20), 700);
         UserDetail ivanUserDetail = saveUserDetail(session, ivan, "3",
                 LocalDate.now().minusYears(22), 1000);
         UserDetail pavelUserDetail = saveUserDetail(session, pavel, "4",
-                LocalDate.now().minusYears(23), 1000);
+                LocalDate.now().minusYears(23), 1100);
         UserDetail tudorUserDetail = saveUserDetail(session, tudor, "5",
                 LocalDate.now().minusYears(24), 1000);
         UserDetail tudorAgacheUserDetail = saveUserDetail(session, tudorAgache, "6",
@@ -50,27 +50,27 @@ public class TestDataImporter {
         Apartment apartment4 = saveApartment(session, 3, 7, 40, ApartmentType.LUX);
         Apartment apartment5 = saveApartment(session, 2, 5, 35, ApartmentType.STANDARD);
 
-        Order andreiOrder = saveOrder(session, andrei, apartment1, LocalDate.now(),
+        Order andreiOrder = saveOrder(session, andrei, apartment1,
+                LocalDate.now(),
                 LocalDate.now().plusDays(2), 1200, OrderStatus.APPROVED);
-
-        Order christinaOrder = saveOrder(session, christina, apartment2, LocalDate.now(),
+        Order christinaOrder = saveOrder(session, christina, apartment2,
+                LocalDate.now(),
                 LocalDate.now().plusDays(3), 1300, OrderStatus.IN_PROGRESS);
-
         Order ivanOrder = saveOrder(session, ivan, apartment1,
                 LocalDate.of(2024, 4, 20),
                 LocalDate.of(2024, 4, 21), 1400, OrderStatus.REJECTED);
         Order pavelOrder = saveOrder(session, pavel, apartment1,
-                LocalDate.of(2024, 4, 22),
-                LocalDate.of(2024, 4, 23), 1500, OrderStatus.APPROVED);
+                LocalDate.of(2024, 4, 2),
+                LocalDate.of(2024, 4, 5), 1500, OrderStatus.APPROVED);
         Order tudorOrder = saveOrder(session, tudor, apartment1,
-                LocalDate.of(2024, 4, 24),
-                LocalDate.of(2024, 4, 25), 2000, OrderStatus.APPROVED);
+                LocalDate.of(2024, 4, 10),
+                LocalDate.of(2024, 4, 14), 2000, OrderStatus.APPROVED);
         Order tudorOrder2 = saveOrder(session, tudor, apartment5,
                 LocalDate.of(2024, 4, 20),
                 LocalDate.of(2024, 4, 26), 2000, OrderStatus.REJECTED);
         Order tudorOrder3 = saveOrder(session, tudor, apartment3,
-                LocalDate.of(2024, 4, 21),
-                LocalDate.of(2024, 4, 22), 2000, OrderStatus.APPROVED);
+                LocalDate.of(2024, 4, 17),
+                LocalDate.of(2024, 4, 20), 2000, OrderStatus.APPROVED);
         Order tudorOrder4 = saveOrder(session, tudor, apartment5,
                 LocalDate.of(2024, 5, 7),
                 LocalDate.of(2024, 5, 9), 2000, OrderStatus.APPROVED);
