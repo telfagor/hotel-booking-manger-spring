@@ -87,11 +87,11 @@ public class TestObjectsUtils {
                 null);
    }
 
-   public UserCreateEditDto getUserCreateEditDto() {
+   public UserCreateEditDto getUserCreateEditDto(String email) {
         return new UserCreateEditDto(
                 "test",
                 "test",
-                "test",
+                email,
                 "test",
                 "test",
                 Gender.MALE

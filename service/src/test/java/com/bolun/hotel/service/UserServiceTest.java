@@ -12,6 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -50,29 +55,30 @@ class UserServiceTest {
         UserReadDto userReadDto1 = TestObjectsUtils.getGetUserReadDto1();
         UserReadDto userReadDto2 = TestObjectsUtils.getGetUserReadDto2();
         List<User> users = List.of(user1, user2);
-
-        doReturn(users).when(userRepository).findAll();
-
+        List<UserReadDto> expectedDtos = List.of(userReadDto1, userReadDto2);
+        Page<User> userPage = new PageImpl<>(users, PageRequest.of(0, 2), users.size());
+        doReturn(userPage).when(userRepository).findAll(any((Pageable.class)));
         doReturn(userReadDto1).when(userReadMapper).mapFrom(user1);
         doReturn(userReadDto2).when(userReadMapper).mapFrom(user2);
 
-        List<UserReadDto> actualResult = userService.findAll();
+        Page<UserReadDto> result = userService.findAll(PageRequest.of(0, 2));
 
-        assertEquals(2, actualResult.size());
-        assertEquals(userReadDto1, actualResult.get(0));
-        assertEquals(userReadDto2, actualResult.get(1));
+        assertThat(result.getContent()).containsExactlyInAnyOrderElementsOf(expectedDtos);
+        assertThat(result.getTotalElements()).isEqualTo(users.size());
+        assertThat(result.getNumber()).isZero();
+        assertThat(result.getSize()).isEqualTo(2);
 
-        verify(userRepository).findAll();
+        verify(userRepository).findAll(any(Pageable.class));
         verify(userReadMapper).mapFrom(user1);
         verify(userReadMapper).mapFrom(user2);
     }
+
 
     @Test
     void shouldFindById() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
         Optional<User> maybeUser = Optional.of(user);
         UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto1();
-
         doReturn(maybeUser).when(userRepository).findById(user.getId());
         doReturn(userReadDto).when(userReadMapper).mapFrom(user);
 
@@ -81,7 +87,6 @@ class UserServiceTest {
         assertThat(actualResult)
                 .isPresent()
                 .contains(userReadDto);
-
         verify(userRepository).findById(user.getId());
         verify(userReadMapper).mapFrom(user);
     }
@@ -89,13 +94,11 @@ class UserServiceTest {
     @Test
     void shouldNotFindById() {
         UUID fakeId = UUID.randomUUID();
-
         doReturn(Optional.empty()).when(userRepository).findById(fakeId);
 
         Optional<UserReadDto> actualResult = userService.findById(fakeId);
 
         assertThat(actualResult).isEmpty();
-
         verify(userRepository).findById(fakeId);
         verifyNoInteractions(userCreateEditMapper);
     }
@@ -103,10 +106,8 @@ class UserServiceTest {
     @Test
     void create() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto();
-
+        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
         UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto2();
-
         doReturn(user).when(userCreateEditMapper).mapFrom(userCreateEditDto);
         doReturn(user).when(userRepository).save(user);
         doReturn(userReadDto).when(userReadMapper).mapFrom(user);
@@ -114,7 +115,6 @@ class UserServiceTest {
         UserReadDto actualResult = userService.create(userCreateEditDto);
 
         assertEquals(userReadDto, actualResult);
-
         verify(userCreateEditMapper).mapFrom(userCreateEditDto);
         verify(userRepository).save(user);
         verify(userReadMapper).mapFrom(user);
@@ -122,8 +122,7 @@ class UserServiceTest {
 
     @Test
     void shouldThrowAnExceptionWhenCreate() {
-        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto();
-
+        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
         doReturn(null).when(userCreateEditMapper).mapFrom(userCreateEditDto);
 
         assertThrows(NoSuchElementException.class, () -> userService.create(userCreateEditDto));
@@ -135,11 +134,8 @@ class UserServiceTest {
     @Test
     void update() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-
-        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto();
-
+        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
         UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto1();
-
         doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
         doReturn(user).when(userCreateEditMapper).mapFrom(userCreateEditDto, user);
         doReturn(user).when(userRepository).saveAndFlush(user);
@@ -150,7 +146,6 @@ class UserServiceTest {
         assertThat(actualResult)
                 .isPresent()
                 .contains(userReadDto);
-
         verify(userRepository).findById(user.getId());
         verify(userRepository).saveAndFlush(user);
         verify(userReadMapper).mapFrom(user);
@@ -159,7 +154,6 @@ class UserServiceTest {
     @Test
     void delete() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-
         doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
 
         boolean actualResult = userService.delete(user.getId());
@@ -172,13 +166,11 @@ class UserServiceTest {
     @Test
     void shouldNotDelete() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-
         doReturn(Optional.empty()).when(userRepository).findById(user.getId());
 
         boolean actualResult = userService.delete(user.getId());
 
         assertFalse(actualResult);
-
         verify(userRepository).findById(user.getId());
         verify(userRepository, never()).delete(user);
     }

@@ -1,18 +1,23 @@
 package com.bolun.hotel.integration.controller;
 
+import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.integration.IntegrationTestBase;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
-import com.bolun.hotel.repository.UserRepository;
+import com.bolun.hotel.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -24,32 +29,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 class UserControllerIT extends IntegrationTestBase {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final MockMvc mockMvc;
 
     @Test
-    void findAll() throws Exception {
-        userRepository.saveAndFlush(TestObjectsUtils.getUser("test@gmail.com"));
-        userRepository.saveAndFlush(TestObjectsUtils.getUser("test2@gmail.com"));
-        userRepository.saveAndFlush(TestObjectsUtils.getUser("test3@gmail.com"));
-        userRepository.saveAndFlush(TestObjectsUtils.getUser("test4@gmail.com"));
+    void findAllWithPagination() throws Exception {
+        userService.create(TestObjectsUtils.getUserCreateEditDto("test@gmail.com"));
+        userService.create(TestObjectsUtils.getUserCreateEditDto("test2@gmail.com"));
+        userService.create(TestObjectsUtils.getUserCreateEditDto("test3@gmail.com"));
+        userService.create(TestObjectsUtils.getUserCreateEditDto("test4@gmail.com"));
+        int page = 1;
+        int size = 2;
 
-        mockMvc.perform(get("/users"))
-                .andExpect(status().is2xxSuccessful())
+        mockMvc.perform(get("/users")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size)))
+                .andExpect(status().isOk())
                 .andExpect(view().name("user/users"))
                 .andExpect(model().attributeExists("users"))
-                .andExpect(model().attribute("users", hasSize(4)));
+                .andExpect(model().attribute("users", hasProperty("content", hasSize(size))))
+                .andExpect(model().attribute("users",
+                        hasProperty("metadata", hasProperty("page", is(page)))))
+                .andExpect(model().attribute("users",
+                        hasProperty("metadata", hasProperty("size", is(size)))));
     }
 
     @Test
     void findById() throws Exception {
-        User user = userRepository.saveAndFlush(TestObjectsUtils.getUser("test@gmail.com"));
+        UserReadDto userReadDto = userService.create(TestObjectsUtils.getUserCreateEditDto("test@gmail.com"));
 
-        mockMvc.perform(get("/users/" + user.getId()))
+        mockMvc.perform(get("/users/" + userReadDto.id()))
                 .andExpectAll(
                         status().is2xxSuccessful(),
                         view().name("user/user"),
-                        model().attributeExists("user")
+                        model().attributeExists("user"),
+                        model().attribute("user", equalTo(userReadDto))
                 );
     }
 
@@ -67,18 +81,25 @@ class UserControllerIT extends IntegrationTestBase {
                         status().is3xxRedirection(),
                         redirectedUrl("/users")
                 );
+
+        Optional<User> actualResult = session.createQuery("select u from User u where email = :email", User.class)
+                .setParameter("email", "covalenco@gmail.com")
+                .uniqueResultOptional();
+        assertThat(actualResult).isPresent();
+        assertThat(actualResult.get().getEmail()).isEqualTo("covalenco@gmail.com");
     }
 
     @Test
     void delete() throws Exception {
-        User user = userRepository.saveAndFlush(TestObjectsUtils.getUser("test@gmail.com"));
+        UserReadDto userReadDto = userService.create(TestObjectsUtils.getUserCreateEditDto("test@gmail.com"));
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + user.getId()))
+        mockMvc.perform(post("/users/" + userReadDto.id() + "/delete"))
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/users")
                 );
 
-        assertFalse(userRepository.findById(user.getId()).isPresent());
+        Optional<UserReadDto> actualResult = userService.findById(userReadDto.id());
+        assertThat(actualResult).isEmpty();
     }
 }

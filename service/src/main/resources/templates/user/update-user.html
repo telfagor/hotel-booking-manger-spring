@@ -4,26 +4,38 @@
     <meta charset="UTF-8">
     <title>Edit User</title>
     <link href="/bootstrap.min.css" rel="stylesheet">
+    <script src="/bootstrap.min.js"></script>
 </head>
 <body>
-<form th:action="@{/users/{id}(id=${user.id})}" th:method="PATCH" th:object="${user}">
-    <label for="firstName">First name:</label>
-    <input id="firstName" type="text" name="firstName" th:value="*{firstName}">
-    <br><br>
-    <label for="lastName">Last name:</label>
-    <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
-    <br><br>
-    <label for="email">Email:</label>
-    <input id="email" type="email" name="email" th:value="*{email}">
-    <br><br>
-    <div th:each="gender: ${genders}">
-        <input th:id="${gender}" type="radio" name="gender" th:value="${gender}"
-               th:checked="${gender eq user.gender}">
-        <label th:for="${gender}" th:text="${gender}"></label>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4" style="width: 100%; max-width: 500px;">
+        <h3 class="text-center mb-4">Update data</h3>
+        <form th:action="@{/users/{id}/update(id=${user.id})}" method="post" th:object="${user}">
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First name:</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" th:value="*{firstName}" required>
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last name:</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" th:value="*{lastName}" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" th:value="*{email}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Gender:</label>
+                <div th:each="gender : ${genders}" class="form-check">
+                    <input type="radio" class="form-check-input"
+                           th:id="${'gender_' + gender}" th:name="gender"
+                           th:checked="${gender eq user.gender}"
+                           th:value="${gender}" required>
+                    <label class="form-check-label" th:for="${'gender_' + gender}" th:text="${gender}"></label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Update</button>
+        </form>
     </div>
-    <button type="submit">Submit</button>
-</form>
-
-<script src="/bootstrap.min.js"></script>
+</div>
 </body>
 </html>

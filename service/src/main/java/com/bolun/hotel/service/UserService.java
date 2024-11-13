@@ -6,14 +6,13 @@ import com.bolun.hotel.mapper.UserCreateEditMapper;
 import com.bolun.hotel.mapper.UserReadMapper;
 import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Optional.of;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +23,9 @@ public class UserService {
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
 
-    public List<UserReadDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userReadMapper::mapFrom)
-                .toList();
+    public Page<UserReadDto> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userReadMapper::mapFrom);
     }
 
     public Optional<UserReadDto> findById(UUID id) {
@@ -37,7 +35,7 @@ public class UserService {
 
     @Transactional
     public UserReadDto create(UserCreateEditDto userDto) {
-        return of(userDto)
+        return Optional.of(userDto)
                 .map(userCreateEditMapper::mapFrom)
                 .map(userRepository::save)
                 .map(userReadMapper::mapFrom)

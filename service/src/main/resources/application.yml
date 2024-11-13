@@ -18,9 +18,9 @@ spring:
     open-in-view: false
 
 # Logger settings
-#logging:
-#  level:
-#    root: INFO
-#  file:
-#    name: hotel.log
-#    path: /
+logging:
+  level:
+    root: INFO
+  file:
+    name: hotel.log
+    path: /
