@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/bootstrap.min.css" rel="stylesheet">
     <script src="/bootstrap.min.js"></script>
 </head>
@@ -10,35 +11,42 @@
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card p-4" style="width: 100%; max-width: 500px;">
         <h3 class="text-center mb-4">Register</h3>
-        <form th:action="@{/users}" method="post">
+        <form th:action="@{/users}" method="post" th:object="${user}">
             <div class="mb-3">
                 <label for="firstName" class="form-label">First name:</label>
-                <input type="text" class="form-control" id="firstName" name="firstName" required>
+                <input type="text" class="form-control" id="firstName" name="firstName" th:field="*{firstName}">
+                <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
             </div>
             <div class="mb-3">
                 <label for="lastName" class="form-label">Last name:</label>
-                <input type="text" class="form-control" id="lastName" name="lastName" required>
+                <input type="text" class="form-control" id="lastName" name="lastName" th:field="*{lastName}">
+                <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="text" class="form-control" id="email" name="email" th:field="*{email}">
+                <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
+                <label for="password" class="form-label" th:field="*{password}">Password:</label>
+                <input type="password" class="form-control" id="password" name="password">
+                <p class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
             </div>
             <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password:</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                <label for="confirmPassword" class="form-label" >Confirm Password:</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                       th:field="*{confirmPassword}">
+                <p class="text-danger" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Gender:</label>
                 <div th:each="gender : ${genders}" class="form-check">
                     <input type="radio" class="form-check-input"
                            th:id="${'gender_' + gender}" th:name="gender"
-                           th:value="${gender}" required>
+                           th:value="${gender}" th:field="*{gender}">
                     <label class="form-check-label" th:for="${'gender_' + gender}" th:text="${gender}"></label>
                 </div>
+                <p class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
             </div>
             <button type="submit" class="btn btn-primary w-100">Register</button>
         </form>

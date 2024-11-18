@@ -1,4 +1,4 @@
-package com.bolun.hotel.util;
+package com.bolun.hotel.dto;
 
 import com.bolun.hotel.entity.enums.ApartmentType;
 import lombok.Builder;

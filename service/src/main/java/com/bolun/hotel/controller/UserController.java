@@ -5,6 +5,9 @@ import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.service.UserService;
+import com.bolun.hotel.validation.group.CreateAction;
+import com.bolun.hotel.validation.group.UpdateAction;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,14 +61,18 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/register")
-    public String createUser(Model model, UserCreateEditDto user) {
-        model.addAttribute("user", user);
-        return "user/register";
+    @GetMapping("/registration")
+    public String getCreateUserPage(@ModelAttribute("user") UserCreateEditDto user) {
+        return "user/registration";
     }
 
     @PostMapping
-    public String create(UserCreateEditDto user) {
+    public String create(/*@ModelAttribute("user")*/
+                          @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "user/registration";
+        }
         userService.create(user);
         return "redirect:/users";
     }
@@ -79,7 +88,14 @@ public class UserController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") UUID id, UserCreateEditDto user) {
+    public String update(@PathVariable("id") UUID id,
+                         @Validated({Default.class, UpdateAction.class}) UserCreateEditDto user,
+                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "user/update-user";
+        }
+
         return userService.update(id, user)
                 .map(it -> "redirect:/users")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

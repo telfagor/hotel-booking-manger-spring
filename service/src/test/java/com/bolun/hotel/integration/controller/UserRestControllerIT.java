@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @RequiredArgsConstructor
-class UserControllerIT extends IntegrationTestBase {
+class UserRestControllerIT extends IntegrationTestBase {
 
     private final UserService userService;
     private final MockMvc mockMvc;

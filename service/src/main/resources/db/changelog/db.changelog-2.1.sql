@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS revision
 --changeset bolun:create-apartment_aud-table-v1
 CREATE TABLE IF NOT EXISTS apartment_aud
 (
-    id BIGINT,
+    id UUID,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    username VARCHAR(64),
-    birth_date DATE,
-    firstname VARCHAR(64),
-    lastname VARCHAR(64),
-    role VARCHAR(32)
+    rooms INT NOT NULL,
+    seats INT NOT NULL,
+    daily_cost INT NOT NULL,
+    type VARCHAR(28) NOT NULL,
+    photo VARCHAR(128) NOT NULL
 );
 --rollback DROP TABLE apartment_aud;
 

@@ -16,7 +16,7 @@
             <div class="col-md-6">
                 <label for="page" class="form-label">Page</label>
                 <input id="page" type="number" name="page" class="form-control"
-                       th:value="${users.metadata.page}" min="1" required>
+                       th:value="${users.metadata.page}" min="0" required>
             </div>
             <div class="col-md-6">
                 <label for="size" class="form-label">Size</label>
@@ -45,7 +45,7 @@
         </tr>
         </tbody>
     </table>
-    <a href="/users/register" class="btn btn-success w-100 mt-3">Add New User</a>
+    <a href="/users/registration" class="btn btn-success w-100 mt-3">Add New User</a>
 </div>
 </body>
 </html>
