@@ -5,8 +5,8 @@ import com.bolun.hotel.entity.enums.ApartmentType;
 import java.util.UUID;
 
 public record ApartmentReadDto(UUID id,
-                               Integer roomNumber,
-                               Integer seatNumber,
+                               Integer rooms,
+                               Integer seats,
                                Integer dailyCost,
                                ApartmentType apartmentType,
                                String photo) {

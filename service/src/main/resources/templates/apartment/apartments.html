@@ -4,53 +4,84 @@
     <meta charset="UTF-8">
     <title>Apartments</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/bootstrap.min.css" rel="stylesheet">
-    <script src="/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="mb-4 text-center">Apartment Filter</h1>
+    <div th:insert="~{logout-fragment :: header}"></div>
+    <h5 class="mb-4 text-center">Find your apartment here:</h5>
+    <form class="mb-4" action="/apartments">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="page" class="form-label">Page</label>
+                <input id="page" type="number" name="page" class="form-control"
+                       th:value="${apartments.metadata.page}" min="0">
+            </div>
+            <div class="col-md-6">
+                <label for="size" class="form-label">Size</label>
+                <input id="size" type="number" name="size" class="form-control"
+                       th:value="${apartments.metadata.size}" min="1">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 w-100">Pagination</button>
+    </form>
 
-    <form class="mb-4" th:action="@{/apartments}">
+    <form class="mb-4" action="/apartments" th:object="${filter}">
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="rooms" class="form-label">Rooms</label>
-                <input id="rooms" type="number" name="rooms" class="form-control" min="1">
+                <input id="rooms" type="number" name="rooms" class="form-control" min="1" th:field="*{rooms}">
             </div>
             <div class="col-md-6">
                 <label for="seats" class="form-label">Seats</label>
-                <input id="seats" type="number" name="seats" class="form-control" min="1">
+                <input id="seats" type="number" name="seats" class="form-control" min="1" th:field="*{seats}">
             </div>
             <div class="col-md-6">
                 <label for="dailyCost" class="form-label">Daily cost</label>
-                <input id="dailyCost" type="number" name="dailyCost" class="form-control" min="1">
+                <input id="dailyCost" type="number" name="dailyCost" class="form-control" min="1"
+                       th:field="*{dailyCost}">
             </div>
             <div class="col-md-6">
-                <label for="type" class="form-label">Type</label>
-                <input id="type" type="number" name="type" class="form-control" min="1">
+                <label for="apartmentType" class="form-label">Apartment Type</label>
+                <select class="form-select" id="apartmentType" name="apartmentType">
+                    <option value="" th:selected="${filter.apartmentType == null}">All Types</option>
+                    <option th:each="apartmentType : ${apartmentTypes}"
+                            th:text="${apartmentType}" th:value="${apartmentType}">
+                    </option>
+                </select>
             </div>
             <div class="col-md-6">
                 <label for="checkIn" class="form-label">Check-in</label>
-                <input id="checkIn" type="number" name="checkIn" class="form-control" min="1">
+                <input id="checkIn" type="text" name="checkIn" class="form-control" min="1" th:field="*{checkIn}">
             </div>
             <div class="col-md-6">
                 <label for="checkOut" class="form-label">Check-out</label>
-                <input id="checkOut" type="number" name="checkOut" class="form-control" min="1">
+                <input id="checkOut" type="text" name="checkOut" class="form-control" min="1" th:field="*{checkOut}">
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3 w-100">Filter</button>
     </form>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-        </thead>
-        <tbody>
-        <tr th:each="apartment, iterStat : ${apartments}">
-            <td th:text="${iterStat.index + 1}"></td>
-            <td th:text="${apartment.roomNumber} + ' ' + ${apartment.seatNumber}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <h4 class="mb-4 text-center">Available apartments!</h4>
+    <div class="row g-3">
+        <div class="col-md-4" th:each="apartment : ${apartments.content}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Apartment</h5>
+                    <p class="card-text">
+                        <strong>Rooms:</strong> <span th:text="${apartment.rooms}"></span><br>
+                        <strong>Seats:</strong> <span th:text="${apartment.seats}"></span><br>
+                        <strong>Cost:</strong> $<span th:text="${apartment.dailyCost}"></span> / day<br>
+                        <strong>Type:</strong> <span th:text="${apartment.apartmentType}"></span>
+                    </p>
+                    <a th:href="@{'/apartments/' + ${apartment.id}}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="/apartments/new" class="btn btn-success w-100 mt-3">Add Apartment</a>
+    <div th:insert="~{footer-fragment :: footer}"></div>
 </div>
 </body>
 </html>

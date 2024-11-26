@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Apartment Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <div th:insert="~{logout-fragment :: header}"></div>
+    <div class="card shadow-lg">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img width="500" th:src="@{/api/v1/apartments/{id}/photo(id=${apartment.id})}"
+                     class="img-fluid rounded-start"
+                     alt="Apartment Photo">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Apartment Information</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Rooms:</strong> <span th:text="${apartment.rooms}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Seats:</strong> <span th:text="${apartment.seats}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Daily Cost:</strong> <span th:text="|'$'${apartment.dailyCost}|"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Type:</strong> <span th:text="${apartment.apartmentType}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Photo:</strong> <span th:text="${apartment.photo}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <a href="/apartments" class="btn btn-secondary mx-2">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+
+        <a th:href="@{/apartments/{id}/update(id=${apartment.id})}" class="btn btn-primary mx-2">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+
+        <form th:action="@{/apartments/{id}/delete(id=${apartment.id})}" method="post">
+            <button type="submit" class="btn btn-danger mx-2">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+        </form>
+    </div>
+    <div th:insert="~{footer-fragment :: footer}"></div>
+</div>
+</body>
+</html>

@@ -67,7 +67,6 @@ class UserServiceTest {
         assertThat(result.getTotalElements()).isEqualTo(users.size());
         assertThat(result.getNumber()).isZero();
         assertThat(result.getSize()).isEqualTo(2);
-
         verify(userRepository).findAll(any(Pageable.class));
         verify(userReadMapper).mapFrom(user1);
         verify(userReadMapper).mapFrom(user2);

@@ -3,12 +3,10 @@ package com.bolun.hotel.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginDto(
+public record LoginDto(@Email
+                       @NotBlank(message = "Email is required")
+                       String email,
 
-        @Email
-        @NotBlank(message = "Email is required")
-        String email,
-
-        @NotBlank(message = "Password is required")
-        String password) {
+                       @NotBlank(message = "Password is required")
+                       String password) {
 }

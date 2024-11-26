@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <title>Edit User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/bootstrap.min.css" rel="stylesheet">
-    <script src="/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:insert="~{logout-fragment :: header}"></div>
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
+
     <div class="card p-4" style="width: 100%; max-width: 500px;">
         <h3 class="text-center mb-4">Update user</h3>
-        <form th:action="@{/users/{id}/update(id=${user.id})}" method="post" th:object="${user}">
+        <form th:action="@{/users/{id}/update(id=${id})}" method="post" th:object="${user}">
             <div class="mb-3">
                 <label for="firstName" class="form-label">First name</label>
                 <input type="text" class="form-control" id="firstName" name="firstName" th:value="*{firstName}">
@@ -42,5 +44,6 @@
         </form>
     </div>
 </div>
+<div th:insert="~{footer-fragment :: footer}"></div>
 </body>
 </html>

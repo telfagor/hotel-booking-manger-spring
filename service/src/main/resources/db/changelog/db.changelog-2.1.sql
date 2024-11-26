@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS apartment_aud
     id UUID,
     rev INT REFERENCES revision (id),
     revtype SMALLINT,
-    rooms INT NOT NULL,
-    seats INT NOT NULL,
-    daily_cost INT NOT NULL,
-    type VARCHAR(28) NOT NULL,
-    photo VARCHAR(128) NOT NULL
+    rooms INT,
+    seats INT,
+    daily_cost INT,
+    type VARCHAR(28),
+    photo VARCHAR(128)
 );
 --rollback DROP TABLE apartment_aud;
 
