@@ -1,7 +1,8 @@
 package com.bolun.hotel.dto;
 
+import com.bolun.hotel.entity.User;
 import com.bolun.hotel.validation.ValidPhoto;
-import com.bolun.hotel.validation.group.CreateAction;
+import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -9,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public record UserDetailCreateEditDto(
 
@@ -18,13 +18,12 @@ public record UserDetailCreateEditDto(
 
         Integer money,
 
-        @NotBlank
+        @NotNull(message = "Birthdate is required")
         @Past(message = "Birthdate must be in the past")
         @DateTimeFormat(pattern = "dd.MM.yyyy")
         LocalDate birthdate,
 
-        @NotNull(message = "Photo is required", groups = CreateAction.class)
-        @ValidPhoto
+        @ValidPhoto(groups = UpdateAction.class)
         MultipartFile photo,
-        UUID userId) {
+        User user) {
 }

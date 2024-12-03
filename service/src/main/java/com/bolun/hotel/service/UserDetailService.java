@@ -38,8 +38,8 @@ public class UserDetailService {
     }
 
     @Transactional
-    public Optional<UserDetailReadDto> update(UserDetailCreateEditDto userDetailDto) {
-        return userDetailRepository.findById(userDetailDto.userId())
+    public Optional<UserDetailReadDto> update(UUID id, UserDetailCreateEditDto userDetailDto) {
+        return userDetailRepository.findById(id)
                 .map(entity -> {
                     uploadImage(userDetailDto.photo());
                     return userDetailCreateEditMapper.mapFrom(userDetailDto, entity);

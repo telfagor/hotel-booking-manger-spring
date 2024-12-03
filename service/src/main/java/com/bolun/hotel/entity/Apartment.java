@@ -37,6 +37,9 @@ public class Apartment extends AuditingEntity<UUID> {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "apartment_number", insertable = false, updatable = false)
+    private Integer apartmentNumber;
+
     @Column(name = "rooms", nullable = false)
     private Integer roomNumber;
 

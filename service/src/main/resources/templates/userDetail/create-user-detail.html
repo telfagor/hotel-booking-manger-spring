@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <title>Create User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:insert="~{logout-fragment :: header}"></div>
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card p-4" style="width: 100%; max-width: 500px;">
         <h3 class="text-center mb-4">Add your info</h3>
-        <form action="/userDetails" method="post" th:object="${userDetail}">
+        <form th:action="@{/userDetails}" method="post" enctype="multipart/form-data" th:object="${userDetail}">
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone Number</label>
                 <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
@@ -24,7 +26,7 @@
             </div>
             <div class="mb-3">
                 <label for="birthdate" class="form-label">Birthdate</label>
-                <input type="date" class="form-control" id="birthdate" name="birthdate" th:field="*{birthdate}">
+                <input type="text" class="form-control" id="birthdate" name="birthdate" th:field="*{birthdate}">
                 <p class="text-danger" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}"></p>
             </div>
             <div class="mb-3">
@@ -35,7 +37,7 @@
             <button type="submit" class="btn btn-primary w-100">Register</button>
         </form>
     </div>
-    <div th:insert="~{footer-fragment :: footer}"></div>
 </div>
+<div th:insert="~{fragments/footer-fragment :: footer}"></div>
 </body>
 </html>

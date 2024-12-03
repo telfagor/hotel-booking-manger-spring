@@ -6,11 +6,6 @@ spring:
     password: pass
     driver-class-name: org.postgresql.Driver
 
-# Spring date settings
-#  mvc:
-#    format:
-#      date: iso
-
 # Liquibase connection settings
   liquibase:
     default-schema: hotel_schema
@@ -22,6 +17,11 @@ spring:
       hibernate.format_sql: true
     open-in-view: false
 
+# Internationalization
+  messages:
+    basename: messages
+
+
 # Logger settings
 logging:
   level:
@@ -30,6 +30,9 @@ logging:
     name: hotel.log
     path: /
 
+
+
+# Images base location
 app:
   image:
     bucket: C:\Users\Admin\IdeaProjects\hotel-booking-manager-spring\service\images

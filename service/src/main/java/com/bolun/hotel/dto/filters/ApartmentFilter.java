@@ -2,21 +2,21 @@ package com.bolun.hotel.dto.filters;
 
 import com.bolun.hotel.entity.enums.ApartmentType;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Value
-@Builder
 public class ApartmentFilter {
 
     public ApartmentFilter(Integer rooms,
                            Integer seats,
                            Integer dailyCost,
                            ApartmentType apartmentType,
+                           @DateTimeFormat(pattern = "dd.MM.yyyy")
                            LocalDate checkIn,
+                           @DateTimeFormat(pattern = "dd.MM.yyyy")
                            LocalDate checkOut) {
         this.rooms = rooms;
         this.seats = seats;

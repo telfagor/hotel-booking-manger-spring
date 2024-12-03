@@ -11,6 +11,7 @@ public class ApartmentReadMapper implements Mapper<Apartment, ApartmentReadDto> 
     public ApartmentReadDto mapFrom(Apartment apartment) {
         return new ApartmentReadDto(
                 apartment.getId(),
+                apartment.getApartmentNumber(),
                 apartment.getRoomNumber(),
                 apartment.getSeatNumber(),
                 apartment.getDailyCost(),

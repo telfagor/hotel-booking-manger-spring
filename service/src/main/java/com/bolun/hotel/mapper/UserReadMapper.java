@@ -6,7 +6,7 @@ import com.bolun.hotel.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static java.util.Optional.ofNullable;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
 
     @Override
     public UserReadDto mapFrom(User user) {
-        UserDetailReadDto userDetail = ofNullable(user.getUserDetail())
+        UserDetailReadDto userDetail = Optional.ofNullable(user.getUserDetail())
                 .map(userDetailReadMapper::mapFrom)
                 .orElse(null);
 

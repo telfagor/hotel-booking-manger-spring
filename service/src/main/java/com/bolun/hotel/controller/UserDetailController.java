@@ -1,9 +1,9 @@
 package com.bolun.hotel.controller;
 
 import com.bolun.hotel.dto.UserDetailCreateEditDto;
-import com.bolun.hotel.entity.UserDetail;
 import com.bolun.hotel.service.UserDetailService;
 import com.bolun.hotel.validation.group.CreateAction;
+import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class UserDetailController {
     private final UserDetailService userDetailService;
 
     @GetMapping("/new")
-    public String getCreateUserDetailPage(@ModelAttribute("userDetail") UserDetail userDetail) {
+    public String getCreateUserDetailPage(@ModelAttribute("userDetail") UserDetailCreateEditDto userDetail) {
         return "userDetail/create-user-detail";
     }
 
@@ -40,7 +40,7 @@ public class UserDetailController {
         }
 
         userDetailService.create(userDetail);
-        return "redirect:/user/users";
+        return "redirect:/apartments";
     }
 
     @GetMapping("/{id}/update")
@@ -51,5 +51,20 @@ public class UserDetailController {
                     return "userDetail/update-user-detail";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/{id}/update")
+    public String update(@ModelAttribute("id") @PathVariable("id") UUID id,
+                         @ModelAttribute("userDetail") @Validated({Default.class, UpdateAction.class}) UserDetailCreateEditDto userDetail,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "userDetail/update-user-detail";
+        }
+
+        userDetailService.update(id, userDetail)
+                .map(it -> "redirect:/users/me")
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return "redirect:/users/me";
     }
 }
