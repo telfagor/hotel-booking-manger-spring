@@ -2,12 +2,16 @@ package com.bolun.hotel.service;
 
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
+import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.mapper.UserCreateEditMapper;
 import com.bolun.hotel.mapper.UserReadMapper;
 import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,20 +21,33 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
 
-    public Page<UserReadDto> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable)
+    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
+        return userRepository.findAll(filter, pageable)
                 .map(userReadMapper::mapFrom);
     }
 
     public Optional<UserReadDto> findById(UUID id) {
         return userRepository.findById(id)
                 .map(userReadMapper::mapFrom);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + email));
+    }
+
+    public UserReadDto findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(userReadMapper::mapFrom)
+                .orElseThrow();
     }
 
     @Transactional

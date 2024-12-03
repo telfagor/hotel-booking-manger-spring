@@ -3,23 +3,27 @@ package com.bolun.hotel.controller;
 import com.bolun.hotel.dto.PageResponse;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
+import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.service.UserService;
+import com.bolun.hotel.validation.group.CreateAction;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -37,12 +41,10 @@ public class UserController {
     }
 
     @GetMapping
-    public String findAll(@RequestParam(defaultValue = "1") int page,
-                          @RequestParam(defaultValue = "20") int size,
-                          Model model) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<UserReadDto> userPage = userService.findAll(pageable);
+    public String findAll(Model model, UserFilter filter, Pageable pageable) {
+        Page<UserReadDto> userPage = userService.findAll(filter, pageable);
         model.addAttribute("users", PageResponse.of(userPage));
+        model.addAttribute("filter", filter);
         return "user/users";
     }
 
@@ -56,16 +58,26 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/register")
-    public String createUser(Model model, UserCreateEditDto user) {
-        model.addAttribute("user", user);
-        return "user/register";
+    @GetMapping("/me")
+    public String getAuthenticatedUser(Model model, Principal principal) {
+        model.addAttribute("user", userService.findByEmail(principal.getName()));
+        return "user/user";
+    }
+
+
+    @GetMapping("/registration")
+    public String getCreateUserPage(@ModelAttribute("user") UserCreateEditDto user) {
+        return "user/registration";
     }
 
     @PostMapping
-    public String create(UserCreateEditDto user) {
+    public String create(@ModelAttribute("user") @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
+                         BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "user/registration";
+        }
         userService.create(user);
-        return "redirect:/users";
+        return "redirect:/login";
     }
 
     @GetMapping("/{id}/update")
@@ -79,7 +91,14 @@ public class UserController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") UUID id, UserCreateEditDto user) {
+    public String update(@ModelAttribute("id") @PathVariable("id") UUID id,
+                         @ModelAttribute("user") @Validated UserCreateEditDto user,
+                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "user/update-user";
+        }
+
         return userService.update(id, user)
                 .map(it -> "redirect:/users")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

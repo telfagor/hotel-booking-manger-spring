@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Apartment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Add New Apartment</h2>
+    <form th:action="@{/apartments}" method="post" enctype="multipart/form-data" th:object="${apartment}">
+        <div class="mb-3">
+            <label for="rooms" class="form-label">Number of Rooms</label>
+            <input type="number" class="form-control" id="rooms" name="rooms" placeholder="Enter number of rooms"
+            th:field="*{rooms}">
+            <p class="text-danger" th:if="${#fields.hasErrors('rooms')}" th:errors="*{rooms}"></p>
+        </div>
+        <div class="mb-3">
+            <label for="seats" class="form-label">Number of Seats</label>
+            <input type="number" class="form-control" id="seats" name="seats" placeholder="Enter number of seats"
+            th:field="*{seats}">
+            <p class="text-danger" th:if="${#fields.hasErrors('seats')}" th:errors="*{seats}"></p>
+        </div>
+        <div class="mb-3">
+            <label for="dailyCost" class="form-label">Daily Cost</label>
+            <input type="number" class="form-control" id="dailyCost" name="dailyCost" placeholder="Enter daily cost"
+            th:field="*{dailyCost}">
+            <p class="text-danger" th:if="${#fields.hasErrors('dailyCost')}" th:errors="*{dailyCost}"></p>
+        </div>
+        <div class="mb-3">
+            <label for="apartmentType" class="form-label">Apartment Type</label>
+            <select class="form-select" id="apartmentType" name="apartmentType">
+                <option th:each="apartmentType : ${apartmentTypes}"
+                        th:text="${apartmentType}" th:value="${apartmentType}">
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="photo" class="form-label">Photo</label>
+            <input type="file" class="form-control" id="photo" name="photo" accept="image/*" th:field="*{photo}">
+            <p class="text-danger" th:if="${#fields.hasErrors('photo')}" th:errors="*{photo}"></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Apartment</button>
+    </form>
+    <div th:insert="~{footer-fragment :: footer}"></div>
+</div>
+</body>
+</html>

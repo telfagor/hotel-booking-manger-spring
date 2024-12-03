@@ -1,11 +1,11 @@
 package com.bolun.hotel.repository;
 
+import com.bolun.hotel.dto.filters.ApartmentFilter;
 import com.bolun.hotel.entity.Apartment;
-import com.bolun.hotel.util.ApartmentFilter;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface FilterApartmentRepository {
 
-    List<Apartment> findAll(ApartmentFilter filter);
+    Page<Apartment> findAll(ApartmentFilter filter, Pageable pageable);
 }

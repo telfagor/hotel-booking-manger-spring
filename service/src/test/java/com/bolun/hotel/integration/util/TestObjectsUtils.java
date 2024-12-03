@@ -1,5 +1,6 @@
 package com.bolun.hotel.integration.util;
 
+import com.bolun.hotel.dto.ApartmentReadDto;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.Apartment;
@@ -14,6 +15,7 @@ import lombok.experimental.UtilityClass;
 
 import java.time.LocalDate;
 import java.util.Random;
+import java.util.UUID;
 
 @UtilityClass
 public class TestObjectsUtils {
@@ -95,6 +97,17 @@ public class TestObjectsUtils {
                 "test",
                 "test",
                 Gender.MALE
+        );
+    }
+
+    public ApartmentReadDto getApartmentReadDto(UUID id) {
+        return new ApartmentReadDto(
+                id,
+                2,
+                4,
+                35,
+                ApartmentType.STANDARD,
+                "path/to/photo.png"
         );
     }
 }

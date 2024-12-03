@@ -3,25 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit User</title>
-    <link href="/bootstrap.min.css" rel="stylesheet">
-    <script src="/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:insert="~{logout-fragment :: header}"></div>
 <div class="container d-flex justify-content-center align-items-center min-vh-100">
+
     <div class="card p-4" style="width: 100%; max-width: 500px;">
-        <h3 class="text-center mb-4">Update data</h3>
-        <form th:action="@{/users/{id}/update(id=${user.id})}" method="post" th:object="${user}">
+        <h3 class="text-center mb-4">Update user</h3>
+        <form th:action="@{/users/{id}/update(id=${id})}" method="post" th:object="${user}">
             <div class="mb-3">
-                <label for="firstName" class="form-label">First name:</label>
-                <input type="text" class="form-control" id="firstName" name="firstName" th:value="*{firstName}" required>
+                <label for="firstName" class="form-label">First name</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" th:value="*{firstName}">
+                <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
             </div>
             <div class="mb-3">
-                <label for="lastName" class="form-label">Last name:</label>
-                <input type="text" class="form-control" id="lastName" name="lastName" th:value="*{lastName}" required>
+                <label for="lastName" class="form-label">Last name</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" th:value="*{lastName}">
+                <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
             </div>
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" class="form-control" id="email" name="email" th:value="*{email}" required>
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email" th:value="*{email}">
+                <p class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Gender:</label>
@@ -32,10 +38,12 @@
                            th:value="${gender}" required>
                     <label class="form-check-label" th:for="${'gender_' + gender}" th:text="${gender}"></label>
                 </div>
+                <p class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
             </div>
             <button type="submit" class="btn btn-primary w-100">Update</button>
         </form>
     </div>
 </div>
+<div th:insert="~{footer-fragment :: footer}"></div>
 </body>
 </html>
