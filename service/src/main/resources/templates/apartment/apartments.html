@@ -8,20 +8,20 @@
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
+<div th:insert="~{fragments/logout-fragment :: logout}"></div>
 <div class="container mt-5">
-    <div th:insert="~{logout-fragment :: header}"></div>
     <h5 class="mb-4 text-center">Find your apartment here:</h5>
-    <form class="mb-4" action="/apartments">
+    <form class="mb-4" action="/apartments" th:object="${apartments}">
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="page" class="form-label">Page</label>
                 <input id="page" type="number" name="page" class="form-control"
-                       th:value="${apartments.metadata.page}" min="0">
+                       th:value="*{metadata.page}" min="0">
             </div>
             <div class="col-md-6">
                 <label for="size" class="form-label">Size</label>
                 <input id="size" type="number" name="size" class="form-control"
-                       th:value="${apartments.metadata.size}" min="1">
+                       th:value="*{metadata.size}" min="1">
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3 w-100">Pagination</button>
@@ -63,12 +63,12 @@
         <button type="submit" class="btn btn-primary mt-3 w-100">Filter</button>
     </form>
 
-    <h4 class="mb-4 text-center">Available apartments!</h4>
-    <div class="row g-3">
+    <h4 class="mb-4 text-center" th:unless="${#lists.isEmpty(apartments.content)}">Available apartments!</h4>
+    <div class="row g-3" th:unless="${#lists.isEmpty(apartments.content)}">
         <div class="col-md-4" th:each="apartment : ${apartments.content}">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Apartment</h5>
+                    <h5 class="card-title" th:text="|Apartment ${apartment.apartmentNumber}|"></h5>
                     <p class="card-text">
                         <strong>Rooms:</strong> <span th:text="${apartment.rooms}"></span><br>
                         <strong>Seats:</strong> <span th:text="${apartment.seats}"></span><br>
@@ -80,8 +80,11 @@
             </div>
         </div>
     </div>
+    <div th:if="${#lists.isEmpty(apartments.content)}">
+        <p class="text-center">No apartments available</p>
+    </div>
     <a href="/apartments/new" class="btn btn-success w-100 mt-3">Add Apartment</a>
-    <div th:insert="~{footer-fragment :: footer}"></div>
+    <div th:insert="~{fragments/footer-fragment :: footer}"></div>
 </div>
 </body>
 </html>

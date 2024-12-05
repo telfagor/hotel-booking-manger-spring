@@ -2,10 +2,12 @@ package com.bolun.hotel.mapper;
 
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.entity.User;
+import com.bolun.hotel.entity.UserDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -34,9 +36,27 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
         user.setEmail(userDto.email());
         user.setGender(userDto.gender());
 
+        UserDetail userDetail = Optional.ofNullable(user.getUserDetail())
+                .orElseGet(UserDetail::new);
+
+        userDetail.setPhoneNumber(userDto.phoneNumber());
+        userDetail.setBirthdate(userDto.birthdate());
+        userDetail.setMoney(userDto.money());
+
+        Optional.ofNullable(userDto.photo())
+                .map(MultipartFile::getOriginalFilename)
+                .filter(filename -> !filename.isEmpty())
+                .ifPresent(userDetail::setPhoto);
+
         Optional.ofNullable(userDto.rawPassword())
                 .filter(StringUtils::hasText)
                 .map(passwordEncoder::encode)
                 .ifPresent(user::setPassword);
+
+        if (StringUtils.hasText(userDetail.getPhoneNumber())) {
+            userDetail.add(user);
+        } else {
+            user.setUserDetail(null);
+        }
     }
 }

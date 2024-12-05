@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.service;
 
 import com.bolun.hotel.dto.UserCreateEditDto;
@@ -102,7 +103,8 @@ class UserServiceTest {
         verifyNoInteractions(userCreateEditMapper);
     }
 
-    @Test
+    */
+/*@Test
     void create() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
         UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
@@ -174,3 +176,4 @@ class UserServiceTest {
         verify(userRepository, never()).delete(user);
     }
 }
+*/

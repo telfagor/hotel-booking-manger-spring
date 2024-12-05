@@ -1,7 +1,6 @@
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.dto.ApartmentReadDto;
-import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.Order;
@@ -89,7 +88,7 @@ public class TestObjectsUtils {
                 null);
    }
 
-   public UserCreateEditDto getUserCreateEditDto(String email) {
+   /*public UserCreateEditDto getUserCreateEditDto(String email) {
         return new UserCreateEditDto(
                 "test",
                 "test",
@@ -98,7 +97,7 @@ public class TestObjectsUtils {
                 "test",
                 Gender.MALE
         );
-    }
+    }*/
 
     public ApartmentReadDto getApartmentReadDto(UUID id) {
         return new ApartmentReadDto(

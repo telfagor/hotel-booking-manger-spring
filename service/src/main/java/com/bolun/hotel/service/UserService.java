@@ -3,17 +3,26 @@ package com.bolun.hotel.service;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.UserFilter;
+import com.bolun.hotel.entity.User;
+import com.bolun.hotel.entity.UserDetail;
+import com.bolun.hotel.mapper.Mapper;
 import com.bolun.hotel.mapper.UserCreateEditMapper;
 import com.bolun.hotel.mapper.UserReadMapper;
 import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +35,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
+    private final ImageService imageService;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
         return userRepository.findAll(filter, pageable)
@@ -37,6 +47,11 @@ public class UserService implements UserDetailsService {
                 .map(userReadMapper::mapFrom);
     }
 
+    public <T> Optional<T> findById(UUID id, Mapper<User, T> mapper) {
+        return userRepository.findById(id)
+                .map(mapper::mapFrom);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
@@ -44,11 +59,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user: " + email));
     }
 
-    public UserReadDto findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(userReadMapper::mapFrom)
-                .orElseThrow();
+    public Optional<UserReadDto> findByEmail(String email) {
+        Optional<User> maybeUser = userRepository.findByEmail(email);
+        return maybeUser.map(userReadMapper::mapFrom);
     }
+
 
     @Transactional
     public UserReadDto create(UserCreateEditDto userDto) {
@@ -62,9 +77,31 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Optional<UserReadDto> update(UUID id, UserCreateEditDto userDto) {
         return userRepository.findById(id)
-                .map(entity -> userCreateEditMapper.mapFrom(userDto, entity))
+                .map(entity -> {
+                    uploadImage(userDto.photo());
+                    return userCreateEditMapper.mapFrom(userDto, entity);
+                })
                 .map(userRepository::saveAndFlush)
-                .map(userReadMapper::mapFrom);
+                .map(updatedUser -> {
+                    Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+                    CustomUserDetails updatedDetails = new CustomUserDetails(updatedUser);
+
+                    SecurityContextHolder.getContext().setAuthentication(
+                            new UsernamePasswordAuthenticationToken(
+                                    updatedDetails,
+                                    currentAuth.getCredentials(),
+                                    updatedDetails.getAuthorities()
+                            )
+                    );
+                    return userReadMapper.mapFrom(updatedUser);
+                });
+    }
+
+    @SneakyThrows
+    private void uploadImage(MultipartFile photo) {
+        if (!photo.isEmpty()) {
+            imageService.upload(photo.getOriginalFilename(), photo.getInputStream());
+        }
     }
 
     @Transactional
@@ -76,5 +113,13 @@ public class UserService implements UserDetailsService {
                     return true;
                 })
                 .orElse(false);
+    }
+
+    public Optional<byte[]> findAvatar(UUID id) {
+        return userRepository.findById(id)
+                .map(User::getUserDetail)
+                .map(UserDetail::getPhoto)
+                .filter(StringUtils::hasText)
+                .flatMap(imageService::get);
     }
 }

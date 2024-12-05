@@ -8,7 +8,6 @@ import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.service.ApartmentService;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
-import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +40,7 @@ public class ApartmentController {
     }
 
     @GetMapping
-    public String findAll(@Valid ApartmentFilter filter, BindingResult bindingResult, Model model,  Pageable pageable) {
+    public String findAll(ApartmentFilter filter, Pageable pageable, Model model) {
         Page<ApartmentReadDto> apartments = apartmentService.findAll(filter, pageable);
         model.addAttribute("apartments", PageResponse.of(apartments));
         model.addAttribute("filter", filter);

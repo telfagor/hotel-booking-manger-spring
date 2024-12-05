@@ -11,6 +11,6 @@ public record UserReadDto(UUID id,
                           String email,
                           Gender gender,
                           Role role,
-                          UserDetailReadDto userDetailReadDto) {
+                          UserDetailReadDto userDetail) {
 
 }
