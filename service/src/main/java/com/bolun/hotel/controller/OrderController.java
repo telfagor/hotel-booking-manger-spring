@@ -86,7 +86,6 @@ public class OrderController {
             return "order/create-order";
         }
 
-        orderService.create(order);
         return "redirect:/apartments";
     }
 

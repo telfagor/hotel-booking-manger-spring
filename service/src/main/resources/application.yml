@@ -17,11 +17,6 @@ spring:
       hibernate.format_sql: true
     open-in-view: false
 
-# Internationalization
-  messages:
-    basename: messages
-
-
 # Logger settings
 logging:
   level:
@@ -29,8 +24,6 @@ logging:
   file:
     name: hotel.log
     path: /
-
-
 
 # Images base location
 app:

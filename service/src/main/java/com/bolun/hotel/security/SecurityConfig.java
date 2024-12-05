@@ -19,7 +19,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/login", "/users/registration", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
-                        .requestMatchers("/api/v1/messages").permitAll()
                         .requestMatchers(POST, "/users").permitAll()
                         .requestMatchers("/users").hasAuthority(ADMIN.getAuthority())
                         .requestMatchers("/users/*/delete").authenticated()
