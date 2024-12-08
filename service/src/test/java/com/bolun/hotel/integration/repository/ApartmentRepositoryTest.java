@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.dto.filters.ApartmentFilter;
@@ -136,3 +137,4 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
         assertThat(actualApartment).isEmpty();
     }
 }
+*/

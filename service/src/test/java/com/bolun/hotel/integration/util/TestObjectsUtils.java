@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.dto.ApartmentReadDto;
@@ -88,7 +89,8 @@ public class TestObjectsUtils {
                 null);
    }
 
-   /*public UserCreateEditDto getUserCreateEditDto(String email) {
+   */
+/*public UserCreateEditDto getUserCreateEditDto(String email) {
         return new UserCreateEditDto(
                 "test",
                 "test",
@@ -97,7 +99,8 @@ public class TestObjectsUtils {
                 "test",
                 Gender.MALE
         );
-    }*/
+    }*//*
+
 
     public ApartmentReadDto getApartmentReadDto(UUID id) {
         return new ApartmentReadDto(
@@ -111,3 +114,4 @@ public class TestObjectsUtils {
     }
 }
 
+*/

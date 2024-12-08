@@ -1,15 +1,18 @@
 package com.bolun.hotel.controller;
 
+import com.bolun.hotel.dto.ChangePasswordDto;
 import com.bolun.hotel.dto.PageResponse;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.entity.enums.Gender;
+import com.bolun.hotel.exception.InvalidOldPasswordException;
 import com.bolun.hotel.mapper.UserToUserCreateEditDtoMapper;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.UserService;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
+import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -101,6 +104,36 @@ public class UserController {
         return userService.update(id, user)
                 .map(it -> "redirect:/apartments")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{id}/change-password")
+    public String getChangePasswordPage(@PathVariable("id") UUID id, Model model) {
+        return userService.findById(id)
+                .map(user -> {
+                    model.addAttribute("id", id);
+                    model.addAttribute("changePasswordDto", new ChangePasswordDto("", "", ""));
+                    return "user/change-password";
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/{id}/change-password")
+    public String changePassword(@ModelAttribute("id") @PathVariable("id") UUID id,
+                                 @ModelAttribute("changePasswordDto") @Valid ChangePasswordDto changePasswordDto,
+                                 BindingResult bindingResult,
+                                 Model model) {
+
+        if (bindingResult.hasErrors()) {
+            return "user/change-password";
+        }
+
+        try {
+            userService.changePassword(id, changePasswordDto);
+            return "redirect:/users/" + id;
+        } catch (InvalidOldPasswordException ex) {
+            model.addAttribute("error", ex.getMessage());
+            return "user/change-password";
+        }
     }
 
     @PostMapping("/{id}/delete")

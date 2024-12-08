@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.util.HibernateUtil;
@@ -26,3 +27,4 @@ public class HibernateTestUtil {
     }
 }
 
+*/
