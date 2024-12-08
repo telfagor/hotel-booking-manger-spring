@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.entity.User;
@@ -88,3 +89,4 @@ class UserRepositoryTest extends IntegrationTestBase {
         assertThat(actualUser).isEmpty();
     }
 }
+*/

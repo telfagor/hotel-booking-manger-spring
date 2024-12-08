@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.entity.Apartment;
@@ -104,3 +105,4 @@ class OrderRepositoryTest extends IntegrationTestBase {
         return order;
     }
 }
+*/

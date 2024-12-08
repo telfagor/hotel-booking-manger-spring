@@ -1,10 +1,12 @@
 package com.bolun.hotel.service;
 
+import com.bolun.hotel.dto.ChangePasswordDto;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.UserDetail;
+import com.bolun.hotel.exception.InvalidOldPasswordException;
 import com.bolun.hotel.mapper.Mapper;
 import com.bolun.hotel.mapper.UserCreateEditMapper;
 import com.bolun.hotel.mapper.UserReadMapper;
@@ -13,16 +15,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +40,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
+    private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
@@ -121,5 +127,20 @@ public class UserService implements UserDetailsService {
                 .map(UserDetail::getPhoto)
                 .filter(StringUtils::hasText)
                 .flatMap(imageService::get);
+    }
+
+    @Transactional
+    public void changePassword(UUID id, ChangePasswordDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new InvalidOldPasswordException("The current password is incorrect");
+        }
+
+        String hashedCurrentPassword = passwordEncoder.encode(dto.currentPassword());
+
+        user.setPassword(hashedCurrentPassword);
+        userRepository.save(user);
     }
 }

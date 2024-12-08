@@ -19,7 +19,7 @@
             <h5 class="mb-0">Personal Information</h5>
         </div>
         <div class="card-body">
-            <div class="col-md-4" th:if="${#strings.length(user.userDetail.photo) > 0}">
+            <div class="col-md-4" th:if="${user.userDetail != null && #strings.length(user.userDetail.photo) > 0}">
                 <img width="500" th:src="@{/api/v1/users/{id}/avatar(id=${user.id})}"
                      class="img-fluid rounded-start"
                      alt="User Photo">
@@ -32,6 +32,11 @@
             </p>
             <p><strong th:text="|Role: ${user.role}|"></strong></p>
             <p><strong th:text="|Gender: ${user.gender}|"></strong></p>
+            <p>
+                <strong>
+                    <a th:href="@{/users/{id}/change-password(id=${user.id})}">Change password</a>
+                </strong>
+            </p>
         </div>
     </div>
 

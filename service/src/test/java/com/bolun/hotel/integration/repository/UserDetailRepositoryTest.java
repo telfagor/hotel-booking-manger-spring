@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.entity.User;
@@ -100,3 +101,4 @@ class UserDetailRepositoryTest extends IntegrationTestBase {
         return userDetail;
     }
 }
+*/

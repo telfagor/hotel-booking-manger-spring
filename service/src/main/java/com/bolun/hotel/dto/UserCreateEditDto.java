@@ -3,6 +3,7 @@ package com.bolun.hotel.dto;
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.validation.PasswordMatcherValidator;
 import com.bolun.hotel.validation.PasswordsMatcher;
+import com.bolun.hotel.validation.UniqueEmail;
 import com.bolun.hotel.validation.ValidPhoto;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
@@ -28,6 +29,7 @@ public record UserCreateEditDto(@NotBlank(message = "First name is required")
 
                                 @NotBlank(message = "Email is required")
                                 @Email(message = "Invalid email address")
+                                @UniqueEmail(groups = CreateAction.class)
                                 String email,
 
                                 @NotBlank(message = "Password is required", groups = CreateAction.class)

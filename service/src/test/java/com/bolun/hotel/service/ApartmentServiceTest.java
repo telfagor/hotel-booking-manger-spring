@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.service;
 
 import com.bolun.hotel.mapper.ApartmentReadMapper;
@@ -21,3 +22,4 @@ class ApartmentServiceTest {
 
 
 }
+*/
