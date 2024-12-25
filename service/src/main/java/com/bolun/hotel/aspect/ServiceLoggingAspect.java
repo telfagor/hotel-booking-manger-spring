@@ -14,27 +14,25 @@ import java.util.Arrays;
 @Component
 public class ServiceLoggingAspect {
 
-    /**
-     * Почему-то этот pointcut не работает с @Around
-     */
-    @Pointcut("@within(com.bolun.hotel.service.*Service)")
+    @Pointcut("within(com.bolun.hotel.service.*Service)")
     public void isServiceLayer() {
 
     }
 
-    @Around("execution(* com.bolun.hotel.service..*Service.*(..))")
+    @Around("isServiceLayer() && execution(* com.bolun.hotel.service..*Service.*(..))")
     public Object logAroundMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+        String className = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = joinPoint.getSignature().toShortString();
         Object[] args = joinPoint.getArgs();
 
-        log.info("Entering method: {} with arguments: {}", methodName, Arrays.toString(args));
+        log.info("Class: {} Entering method: {} with arguments: {}", className, methodName, Arrays.toString(args));
 
         Object result;
         try {
             result = joinPoint.proceed();
-            log.info("Exiting method: {} with result: {}", methodName, result);
+            log.info("Class: {} Exiting method: {} with result: {}", className, methodName, result);
         } catch (Exception e) {
-            log.error("Exception in method: {} with arguments: {}", methodName, Arrays.toString(args), e);
+            log.error("Class: {} Exception in method: {} with arguments: {}", className, methodName, Arrays.toString(args), e);
             throw e;
         }
 

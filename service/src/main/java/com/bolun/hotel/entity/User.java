@@ -2,6 +2,7 @@ package com.bolun.hotel.entity;
 
 import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.entity.enums.Role;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +21,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -33,6 +36,8 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "email")
 @NoArgsConstructor
 @AllArgsConstructor
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
 @Builder
 @Entity
 @Table(name = "\"user\"", schema = "hotel_schema", catalog = "hotel_repository")
@@ -64,13 +69,16 @@ public class User extends AuditingEntity<UUID> {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column(name = "deleted", nullable = false, insertable = false)
+    private boolean deleted;
+
     @NotAudited
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserDetail userDetail;
 
     @NotAudited
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 
     public void add(UserDetail userDetail) {

@@ -4,7 +4,7 @@ import com.bolun.hotel.validation.PasswordMatcherValidator;
 import com.bolun.hotel.validation.PasswordsMatcher;
 import jakarta.validation.constraints.NotBlank;
 
-@PasswordsMatcher
+@PasswordsMatcher(passwordField = "newPassword", confirmPasswordField = "confirmNewPassword")
 public record ChangePasswordDto(@NotBlank(message = "Current password is required")
                                 String currentPassword,
                                 @NotBlank(message = "New password is required")

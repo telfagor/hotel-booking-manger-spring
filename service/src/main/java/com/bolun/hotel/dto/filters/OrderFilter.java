@@ -10,17 +10,15 @@ import java.time.LocalDate;
 
 public record OrderFilter(@DateTimeFormat(pattern = "dd.MM.yyyy")
                           LocalDate checkIn,
-
                           @DateTimeFormat(pattern = "dd.MM.yyyy")
                           LocalDate checkOut,
-
                           @Min(value = 10, message = "At least $10")
-                          Integer totalCost,
-
+                          Integer totalCostFrom,
+                          @Min(value = 10, message = "At least $10")
+                          Integer totalCostTo,
                           @Email
                           String email,
                           OrderStatus status,
-
                           @Min(value = 1, message = "At least 1")
                           Integer apartmentNumber) {
 }

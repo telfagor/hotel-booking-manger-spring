@@ -1,6 +1,6 @@
 package com.bolun.hotel.validation;
 
-import com.bolun.hotel.validation.impl.PasswordMatcherValidatorImpl;
+import com.bolun.hotel.validation.impl.UniquePhoneNumberValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -9,14 +9,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = PasswordMatcherValidatorImpl.class)
-@Target(ElementType.TYPE)
+@Constraint(validatedBy = UniquePhoneNumberValidator.class)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PasswordsMatcher {
+public @interface UniquePhoneNumber {
 
-    String message() default "Passwords do not match";
+    String message() default "Phone number already exists";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String passwordField();
-    String confirmPasswordField();
 }

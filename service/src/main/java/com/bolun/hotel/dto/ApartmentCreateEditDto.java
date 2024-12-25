@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
-public record ApartmentCreateEditDto(
+public record ApartmentCreateEditDto (
         @NotNull(message = "Rooms are required", groups = CreateAction.class)
         @Min(value = 1, message = "At least one room is required")
         @Max(value = 4, message = "At most 4 rooms")

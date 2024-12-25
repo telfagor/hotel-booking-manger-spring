@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,11 +43,13 @@ public class ApartmentController {
     @GetMapping
     public String findAll(ApartmentFilter filter, Pageable pageable, Model model) {
         Page<ApartmentReadDto> apartments = apartmentService.findAll(filter, pageable);
-        model.addAttribute("apartments", PageResponse.of(apartments));
+        model.addAttribute("data", PageResponse.of(apartments));
         model.addAttribute("filter", filter);
+        model.addAttribute("baseUrl", "/apartments");
         return "apartment/apartments";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     @GetMapping("/{id}")
     public String findById(@PathVariable UUID id, Model model) {
         return apartmentService.findById(id)
@@ -78,6 +81,7 @@ public class ApartmentController {
         return apartmentService.findById(id)
                 .map(apartment -> {
                     model.addAttribute("apartment", apartment);
+                    model.addAttribute("apartmentNumber", apartment.apartmentNumber());
                     return "apartment/update-apartment";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

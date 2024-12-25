@@ -3,6 +3,9 @@ package com.bolun.hotel.service;
 import com.bolun.hotel.dto.OrderCreateEditDto;
 import com.bolun.hotel.dto.OrderReadDto;
 import com.bolun.hotel.dto.filters.OrderFilter;
+import com.bolun.hotel.entity.Order;
+import com.bolun.hotel.entity.User;
+import com.bolun.hotel.entity.UserDetail;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.mapper.OrderCreateEditMapper;
 import com.bolun.hotel.mapper.OrderReadMapper;
@@ -13,9 +16,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.bolun.hotel.entity.enums.OrderStatus.APPROVED;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +42,17 @@ public class OrderService {
 
     @Transactional
     public Optional<OrderReadDto> updateOrderStatus(UUID id, OrderStatus orderStatus) {
-        return orderRepository.findById(id)
+        return orderRepository.findActiveByIdWithLock(id)
                 .map(order -> {
+                    if (orderStatus == APPROVED) {
+                        User user = order.getUser();
+                        UserDetail userDetail = user.getUserDetail();
+                        Integer totalCost = calculateTotalCost(order);
+                        order.setTotalCost(totalCost);
+                        Integer money = userDetail.getMoney();
+                        money -= order.getTotalCost();
+                        userDetail.setMoney(money);
+                    }
                     order.setStatus(orderStatus);
                     return orderRepository.saveAndFlush(order);
                 })
@@ -51,25 +65,34 @@ public class OrderService {
     }
 
     public Optional<OrderReadDto> findById(UUID id) {
-        return orderRepository.findById(id)
+        return orderRepository.findActiveById(id)
                 .map(orderReadMapper::mapFrom);
+    }
+
+    public UUID findUserIdByOrderId(UUID orderId) {
+        return orderRepository.findUserIdByOrderId(orderId)
+                .orElseThrow();
     }
 
     @Transactional
     public boolean delete(UUID id) {
-        return orderRepository.findById(id)
+        return orderRepository.findActiveByIdWithLock(id)
                 .map(order -> {
-                    orderRepository.delete(order);
+                    order.setDeleted(true);
                     orderRepository.flush();
                     return true;
                 })
                 .orElse(false);
     }
 
-    public List<OrderReadDto> findOrdersByUserId(UUID id) {
-        return orderRepository.findAllByUserId(id).stream()
-                .map(orderReadMapper::mapFrom)
-                .toList();
+    public Page<OrderReadDto> findOrdersByUserId(UUID id, OrderFilter filter, Pageable pageable) {
+        return orderRepository.findAllByUserId(id, filter, pageable)
+                .map(orderReadMapper::mapFrom);
+    }
+
+    private Integer calculateTotalCost(Order order) {
+        long reservationDays = ChronoUnit.DAYS.between(order.getCheckIn(), order.getCheckOut());
+        return (int) reservationDays * order.getApartment().getDailyCost();
     }
 }
 

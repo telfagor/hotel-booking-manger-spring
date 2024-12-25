@@ -17,6 +17,8 @@ public record UserFilter(String firstName,
                          LocalDate birthdateFrom,
                          @DateTimeFormat(pattern = "dd.MM.yyyy")
                          LocalDate birthdateTo,
-                         Integer money) {
+                         Integer moneyFrom,
+
+                         Integer moneyTo) {
 
 }

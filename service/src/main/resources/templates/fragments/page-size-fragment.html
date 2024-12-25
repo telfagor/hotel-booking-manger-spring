@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Page Size</title>
+    <div th:replace="~{fragments/background-fragment :: background-style}"></div>
+</head>
+<body>
+<form class="mb-4 ms-auto d-flex align-items-center" style="max-width: 300px;" method="get" th:action="@{${baseUrl}}">
+    <div class="me-2 flex-grow-1">
+        <label for="size" class="visually-hidden">Size</label>
+        <input id="size" type="number" name="size" class="form-control"
+               th:value="${data.metadata.size}" min="1" required placeholder="Size">
+    </div>
+    <button type="submit" class="btn btn-primary">Set Size</button>
+</form>
+</body>
+</html>
