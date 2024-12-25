@@ -9,6 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PasswordMatcherValidatorImpl implements ConstraintValidator<PasswordsMatcher, PasswordMatcherValidator> {
 
+    private String passwordField;
+    private String confirmPasswordField;
+
+    @Override
+    public void initialize(PasswordsMatcher constraintAnnotation) {
+        this.passwordField = constraintAnnotation.passwordField();
+        this.confirmPasswordField = constraintAnnotation.confirmPasswordField();
+    }
+
     @Override
     public boolean isValid(PasswordMatcherValidator user, ConstraintValidatorContext context) {
         if (user == null) {
@@ -19,9 +28,10 @@ public class PasswordMatcherValidatorImpl implements ConstraintValidator<Passwor
         if (!passwordsMatch) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Passwords do not match")
-                    .addPropertyNode("confirmPassword")
+                    .addPropertyNode(confirmPasswordField)
                     .addConstraintViolation();
         }
         return passwordsMatch;
     }
 }
+

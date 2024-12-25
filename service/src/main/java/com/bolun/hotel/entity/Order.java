@@ -1,6 +1,7 @@
 package com.bolun.hotel.entity;
 
 import com.bolun.hotel.entity.enums.OrderStatus;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +18,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -28,6 +31,8 @@ import java.util.UUID;
 @ToString(exclude = {"apartment", "user"})
 @NoArgsConstructor
 @AllArgsConstructor
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
 @Builder
 @Entity
 @Table(name = "\"order\"", schema = "hotel_schema", catalog = "hotel_repository")
@@ -46,6 +51,9 @@ public class Order extends AuditingEntity<UUID> {
 
     @Column(name = "total_cost", nullable = false)
     private Integer totalCost;
+
+    @Column(name = "deleted", nullable = false, insertable = false)
+    private Boolean deleted;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 64)

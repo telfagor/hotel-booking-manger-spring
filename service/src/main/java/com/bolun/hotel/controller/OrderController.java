@@ -7,6 +7,7 @@ import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.OrderFilter;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.exception.InsufficientFundsException;
+import com.bolun.hotel.exception.InvalidAgeException;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.UserService;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
@@ -46,16 +49,21 @@ public class OrderController {
     @GetMapping
     public String findAll(Model model, OrderFilter filter, Pageable pageable) {
         Page<OrderReadDto> orders = orderService.findAll(filter, pageable);
-        model.addAttribute("orders", PageResponse.of(orders));
+        model.addAttribute("data", PageResponse.of(orders));
         model.addAttribute("filter", filter);
+        model.addAttribute("baseUrl", "/orders");
         return "order/orders";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN') or @orderService.findUserIdByOrderId(#id) == principal.id")
     @GetMapping("/{id}")
-    public String findById(@PathVariable("id") UUID id, Model model) {
+    public String findById(@PathVariable("id") UUID id,
+                           @RequestHeader(value = "Referer", required = false) String referer,
+                           Model model) {
         return orderService.findById(id)
                 .map(order -> {
                     model.addAttribute("order", order);
+                    model.addAttribute("referer", referer != null ? referer : "/apartments");
                     return "order/order";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -81,7 +89,7 @@ public class OrderController {
 
         try {
             orderService.create(order);
-        } catch (InsufficientFundsException e) {
+        } catch (InsufficientFundsException | InvalidAgeException e) {
             model.addAttribute("error", e.getMessage());
             return "order/create-order";
         }
@@ -111,7 +119,6 @@ public class OrderController {
         if (!orderService.delete(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        orderService.delete(id);
         return "redirect:/orders";
     }
 }

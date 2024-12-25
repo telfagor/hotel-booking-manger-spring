@@ -17,6 +17,7 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final String firstName;
     private final String lastName;
+    private final boolean deleted;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user) {
@@ -25,6 +26,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getPassword();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.deleted = user.isDeleted();
         this.authorities = Collections.singleton(user.getRole());
     }
 
@@ -41,5 +43,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !deleted;
     }
 }

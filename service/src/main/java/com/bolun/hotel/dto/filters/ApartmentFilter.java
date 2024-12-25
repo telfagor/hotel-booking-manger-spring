@@ -12,7 +12,8 @@ public class ApartmentFilter {
 
     public ApartmentFilter(Integer rooms,
                            Integer seats,
-                           Integer dailyCost,
+                           Integer dailyCostFrom,
+                           Integer dailyCostTo,
                            ApartmentType apartmentType,
                            @DateTimeFormat(pattern = "dd.MM.yyyy")
                            LocalDate checkIn,
@@ -20,7 +21,8 @@ public class ApartmentFilter {
                            LocalDate checkOut) {
         this.rooms = rooms;
         this.seats = seats;
-        this.dailyCost = dailyCost;
+        this.dailyCostFrom = dailyCostFrom;
+        this.dailyCostTo = dailyCostTo;
         this.apartmentType = apartmentType;
         this.checkIn = checkIn == null ? LocalDate.now() : checkIn;
         this.checkOut = checkOut == null ? LocalDate.now().plusDays(1) : checkOut;
@@ -28,7 +30,8 @@ public class ApartmentFilter {
 
     Integer rooms;
     Integer seats;
-    Integer dailyCost;
+    Integer dailyCostFrom;
+    Integer dailyCostTo;
     ApartmentType apartmentType;
 
     @NotNull(message = "check-in is required")

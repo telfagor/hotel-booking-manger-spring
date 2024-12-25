@@ -4,29 +4,14 @@
     <meta charset="UTF-8">
     <title>Apartments</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/hotel-favicon.png">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div th:insert="~{fragments/logout-fragment :: logout}"></div>
+<div th:replace="~{fragments/header-fragment :: header}"></div>
 <div class="container mt-5">
     <h5 class="mb-4 text-center">Find your apartment here:</h5>
-    <form class="mb-4" action="/apartments" th:object="${apartments}">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label for="page" class="form-label">Page</label>
-                <input id="page" type="number" name="page" class="form-control"
-                       th:value="*{metadata.page}" min="0">
-            </div>
-            <div class="col-md-6">
-                <label for="size" class="form-label">Size</label>
-                <input id="size" type="number" name="size" class="form-control"
-                       th:value="*{metadata.size}" min="1">
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3 w-100">Pagination</button>
-    </form>
-
     <form class="mb-4" action="/apartments" th:object="${filter}">
         <div class="row g-3">
             <div class="col-md-6">
@@ -38,9 +23,14 @@
                 <input id="seats" type="number" name="seats" class="form-control" min="1" th:field="*{seats}">
             </div>
             <div class="col-md-6">
-                <label for="dailyCost" class="form-label">Daily cost</label>
-                <input id="dailyCost" type="number" name="dailyCost" class="form-control" min="1"
-                       th:field="*{dailyCost}">
+                <label for="dailyCostFrom" class="form-label">Daily cost from</label>
+                <input id="dailyCostFrom" type="number" name="dailyCostFrom" class="form-control" min="1"
+                       th:field="*{dailyCostFrom}">
+            </div>
+            <div class="col-md-6">
+                <label for="dailyCostTo" class="form-label">Daily cost to</label>
+                <input id="dailyCostTo" type="number" name="dailyCostTo" class="form-control" min="1"
+                       th:field="*{dailyCostTo}">
             </div>
             <div class="col-md-6">
                 <label for="apartmentType" class="form-label">Apartment Type</label>
@@ -63,9 +53,11 @@
         <button type="submit" class="btn btn-primary mt-3 w-100">Filter</button>
     </form>
 
-    <h4 class="mb-4 text-center" th:unless="${#lists.isEmpty(apartments.content)}">Available apartments!</h4>
-    <div class="row g-3" th:unless="${#lists.isEmpty(apartments.content)}">
-        <div class="col-md-4" th:each="apartment : ${apartments.content}">
+    <h4 class="mb-4 text-center" th:unless="${#lists.isEmpty(data.content)}">Available apartments!</h4>
+
+    <div th:replace="~{fragments/page-size-fragment :: form}"></div>
+    <div class="row g-3" th:unless="${#lists.isEmpty(data.content)}">
+        <div class="col-md-4" th:each="apartment : ${data.content}">
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title" th:text="|Apartment ${apartment.apartmentNumber}|"></h5>
@@ -80,11 +72,16 @@
             </div>
         </div>
     </div>
-    <div th:if="${#lists.isEmpty(apartments.content)}">
+
+    <div th:if="${#lists.isEmpty(data.content)}">
         <p class="text-center">No apartments available</p>
     </div>
-    <a href="/apartments/new" class="btn btn-success w-100 mt-3">Add Apartment</a>
-    <div th:insert="~{fragments/footer-fragment :: footer}"></div>
+
+    <div style="margin-top: 20px" th:insert="~{fragments/pagination-fragment :: nav}"></div>
+
+    <a th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}"
+       href="/apartments/new" class="btn btn-success w-100 mt-3" >Add Apartment</a>
+    <div th:replace="~{fragments/footer-fragment :: footer}"></div>
 </div>
 </body>
 </html>

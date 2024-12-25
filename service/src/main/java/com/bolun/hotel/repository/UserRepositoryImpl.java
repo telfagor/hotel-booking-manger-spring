@@ -26,11 +26,12 @@ public class UserRepositoryImpl implements FilterUserRepository {
     @Override
     public Page<User> findAll(UserFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
+
         List<User> users = new JPAQuery<>(entityManager)
                 .select(user)
                 .from(user)
                 .leftJoin(user.userDetail).fetchJoin()
-                .where(predicate)
+                .where(predicate, user.deleted.eq(false))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -50,7 +51,8 @@ public class UserRepositoryImpl implements FilterUserRepository {
                 .add(filter.phoneNumber(), user.userDetail.phoneNumber::containsIgnoreCase)
                 .add(filter.birthdateFrom(), user.userDetail.birthdate::goe)
                 .add(filter.birthdateTo(), user.userDetail.birthdate::loe)
-                .add(filter.money(), user.userDetail.money::eq)
+                .add(filter.moneyFrom(), user.userDetail.money::goe)
+                .add(filter.moneyTo(), user.userDetail.money::loe)
                 .buildAnd();
     }
 
@@ -58,7 +60,7 @@ public class UserRepositoryImpl implements FilterUserRepository {
         return new JPAQuery<>(entityManager)
                 .select(user.count())
                 .from(user)
-                .join(user.userDetail, userDetail)
+                .leftJoin(user.userDetail, userDetail)
                 .where(predicate)
                 .fetchOne();
     }

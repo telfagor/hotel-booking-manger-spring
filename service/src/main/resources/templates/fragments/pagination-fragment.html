@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pagination</title>
+    <div th:replace="~{fragments/background-fragment :: background-style}"></div>
+</head>
+<body>
+<nav th:if="${data.metadata.totalElements > data.metadata.size}">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${data.metadata.page == 0} ? 'disabled'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${data.metadata.page - 1}, size=${data.metadata.size})}" tabindex="-1">Previous</a>
+        </li>
+
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, (data.metadata.totalElements - 1) / data.metadata.size)}"
+            th:classappend="${i == data.metadata.page} ? 'active'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${i}, size=${data.metadata.size})}" th:text="${i + 1}">1</a>
+        </li>
+
+        <li class="page-item" th:classappend="${data.metadata.page == ((data.metadata.totalElements - 1) / data.metadata.size)} ? 'disabled'">
+            <a class="page-link" th:href="@{${baseUrl}(page=${data.metadata.page + 1}, size=${data.metadata.size})}">Next</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

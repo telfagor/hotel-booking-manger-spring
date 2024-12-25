@@ -5,6 +5,7 @@ import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.UserDetail;
 import com.bolun.hotel.exception.InsufficientFundsException;
+import com.bolun.hotel.exception.InvalidAgeException;
 import com.bolun.hotel.repository.ApartmentRepository;
 import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ import static com.bolun.hotel.entity.enums.OrderStatus.IN_PROGRESS;
 @RequiredArgsConstructor
 public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> {
 
+    private static final int ADULT_AGE = 18;
     private final UserRepository userRepository;
     private final ApartmentRepository apartmentRepository;
 
@@ -46,19 +49,14 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
         apartmentRepository.findById(orderDto.apartmentId())
                 .ifPresent(order::setApartment);
 
-        Integer totalCost = calculateTotalCost(order);
-        if (maybeUser.isPresent() && maybeUser.get().getUserDetail() != null) {
-            User user = maybeUser.get();
+        maybeUser.ifPresent(user -> {
             UserDetail userDetail = user.getUserDetail();
-            if (userDetail.getMoney() < totalCost) {
-                throw new InsufficientFundsException("Insufficient funds");
-            }
+            checkAge(userDetail);
+            checkTotalCost(order, userDetail);
+            int totalCost = calculateTotalCost(order);
             order.setTotalCost(totalCost);
-            Integer money = userDetail.getMoney();
-            money -= order.getTotalCost();
-            userDetail.setMoney(money);
             order.add(user);
-        }
+        });
     }
 
     private Optional<User> getCurrentAuthenticatedUser() {
@@ -68,7 +66,21 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .flatMap(userRepository::findByEmail);
     }
 
-    private Integer calculateTotalCost(Order order) {
+    private void checkAge(UserDetail userDetail) {
+        int age = (int) ChronoUnit.YEARS.between(userDetail.getBirthdate(), LocalDate.now());
+        if (age < ADULT_AGE) {
+            throw new InvalidAgeException("Invalid age. You are minor.");
+        }
+    }
+
+    private void checkTotalCost(Order order, UserDetail userDetail) {
+        Integer totalCost = calculateTotalCost(order);
+        if (userDetail.getMoney() < totalCost) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+    }
+
+    private int calculateTotalCost(Order order) {
         long reservationDays = ChronoUnit.DAYS.between(order.getCheckIn(), order.getCheckOut());
         return (int) reservationDays * order.getApartment().getDailyCost();
     }

@@ -5,6 +5,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,13 @@ public class QuerydslPredicate {
 
     public <T> QuerydslPredicate add(T object, Function<T, Predicate> function) {
         if (object != null) {
+            predicates.add(function.apply(object));
+        }
+        return this;
+    }
+
+    public <T extends CharSequence> QuerydslPredicate add(T object, Function<T, Predicate> function) {
+        if (StringUtils.hasText(object)) {
             predicates.add(function.apply(object));
         }
         return this;

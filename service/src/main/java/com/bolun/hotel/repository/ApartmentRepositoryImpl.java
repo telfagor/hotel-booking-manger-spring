@@ -29,25 +29,21 @@ public class ApartmentRepositoryImpl implements FilterApartmentRepository {
     public Page<Apartment> findAll(ApartmentFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
 
-        BooleanExpression availabilityCondition = order.isNull()
-                .or(order.status.ne(APPROVED));
+        BooleanExpression availabilityCondition = order.checkOut.goe(filter.getCheckOut())
+                .and(order.checkIn.lt(filter.getCheckOut()).and(order.checkOut.gt(filter.getCheckIn())));
 
-        BooleanExpression checkInCondition = getByCheckInDate(filter);
-        BooleanExpression checkOutCondition = getByCheckOutDate(filter);
-
-        BooleanExpression dateCondition = checkInCondition.or(checkOutCondition);
 
         List<Apartment> apartments = new JPAQuery<>(entityManager)
                 .select(apartment)
                 .from(apartment)
                 .leftJoin(apartment.orders, order)
-                .on(dateCondition)
-                .where(predicate, availabilityCondition)
+                .on(order.status.eq(APPROVED), availabilityCondition)
+                .where(predicate, order.isNull(), apartment.deleted.eq(false))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long totalElements = getTotalElements(predicate, availabilityCondition, dateCondition);
+        long totalElements = getTotalElements(predicate, availabilityCondition);
 
         return new PageImpl<>(apartments, pageable, totalElements);
     }
@@ -56,32 +52,20 @@ public class ApartmentRepositoryImpl implements FilterApartmentRepository {
         return QuerydslPredicate.builder()
                 .add(filter.getRooms(), apartment.roomNumber::eq)
                 .add(filter.getSeats(), apartment.seatNumber::eq)
-                .add(filter.getDailyCost(), apartment.dailyCost::eq)
+                .add(filter.getDailyCostFrom(), apartment.dailyCost::goe)
+                .add(filter.getDailyCostTo(), apartment.dailyCost::loe)
                 .add(filter.getApartmentType(), apartment.apartmentType::eq)
                 .buildAnd();
     }
 
-    private static BooleanExpression getByCheckInDate(ApartmentFilter filter) {
-        BooleanExpression checkInAfter = order.checkIn.gt(filter.getCheckIn());
-        BooleanExpression checkInBefore = order.checkIn.lt(filter.getCheckOut());
-        return checkInAfter.and(checkInBefore);
-    }
-
-    private static BooleanExpression getByCheckOutDate(ApartmentFilter filter) {
-        BooleanExpression checkOutAfter = order.checkOut.gt(filter.getCheckIn());
-        BooleanExpression checkOutBefore = order.checkOut.lt(filter.getCheckOut());
-        return checkOutAfter.or(checkOutBefore);
-    }
-
     private Long getTotalElements(Predicate predicate,
-                                  BooleanExpression availabilityCondition,
-                                  BooleanExpression dateCondition) {
+                                  BooleanExpression availabilityCondition) {
         return new JPAQuery<>(entityManager)
                 .select(apartment.count())
                 .from(apartment)
                 .leftJoin(apartment.orders, order)
-                .on(dateCondition)
-                .where(predicate, availabilityCondition)
+                .on(order.status.eq(APPROVED), availabilityCondition)
+                .where(predicate, order.isNull(), apartment.deleted.eq(false))
                 .fetchOne();
     }
 }

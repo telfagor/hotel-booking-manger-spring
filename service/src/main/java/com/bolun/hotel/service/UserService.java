@@ -1,5 +1,6 @@
 package com.bolun.hotel.service;
 
+import com.bolun.hotel.dto.ChangePasswordDto;
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.UserFilter;
@@ -19,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -26,6 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.bolun.hotel.service.PasswordChangeResult.INVALID_PASSWORD;
+import static com.bolun.hotel.service.PasswordChangeResult.NOT_FOUND;
+import static com.bolun.hotel.service.PasswordChangeResult.SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +41,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
+    private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
@@ -43,12 +50,12 @@ public class UserService implements UserDetailsService {
     }
 
     public Optional<UserReadDto> findById(UUID id) {
-        return userRepository.findById(id)
+        return userRepository.findActiveById(id)
                 .map(userReadMapper::mapFrom);
     }
 
     public <T> Optional<T> findById(UUID id, Mapper<User, T> mapper) {
-        return userRepository.findById(id)
+        return userRepository.findActiveById(id)
                 .map(mapper::mapFrom);
     }
 
@@ -76,7 +83,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<UserReadDto> update(UUID id, UserCreateEditDto userDto) {
-        return userRepository.findById(id)
+        return userRepository.findActiveByIdWithLock(id)
                 .map(entity -> {
                     uploadImage(userDto.photo());
                     return userCreateEditMapper.mapFrom(userDto, entity);
@@ -84,18 +91,24 @@ public class UserService implements UserDetailsService {
                 .map(userRepository::saveAndFlush)
                 .map(updatedUser -> {
                     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-                    CustomUserDetails updatedDetails = new CustomUserDetails(updatedUser);
+                    CustomUserDetails currentUserDetails = (CustomUserDetails) currentAuth.getPrincipal();
 
-                    SecurityContextHolder.getContext().setAuthentication(
-                            new UsernamePasswordAuthenticationToken(
-                                    updatedDetails,
-                                    currentAuth.getCredentials(),
-                                    updatedDetails.getAuthorities()
-                            )
-                    );
+                    if (currentUserDetails.getId().equals(updatedUser.getId())) {
+                        CustomUserDetails updatedDetails = new CustomUserDetails(updatedUser);
+
+                        SecurityContextHolder.getContext().setAuthentication(
+                                new UsernamePasswordAuthenticationToken(
+                                        updatedDetails,
+                                        currentAuth.getCredentials(),
+                                        updatedDetails.getAuthorities()
+                                )
+                        );
+                    }
+
                     return userReadMapper.mapFrom(updatedUser);
                 });
     }
+
 
     @SneakyThrows
     private void uploadImage(MultipartFile photo) {
@@ -104,22 +117,36 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Transactional
-    public boolean delete(UUID id) {
-        return userRepository.findById(id)
-                .map(entity -> {
-                    userRepository.delete(entity);
-                    userRepository.flush();
-                    return true;
-                })
-                .orElse(false);
-    }
-
     public Optional<byte[]> findAvatar(UUID id) {
         return userRepository.findById(id)
                 .map(User::getUserDetail)
                 .map(UserDetail::getPhoto)
                 .filter(StringUtils::hasText)
                 .flatMap(imageService::get);
+    }
+
+    @Transactional
+    public PasswordChangeResult changePassword(UUID id, ChangePasswordDto dto) {
+        return userRepository.findActiveByIdWithLock(id)
+                .map(user -> {
+                    if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+                        return INVALID_PASSWORD;
+                    }
+
+                    user.setPassword(passwordEncoder.encode(dto.newPassword()));
+                    return SUCCESS;
+                })
+                .orElse(NOT_FOUND);
+    }
+
+    @Transactional
+    public boolean delete(UUID id) {
+        return userRepository.findActiveByIdWithLock(id)
+                .map(user -> {
+                    user.setDeleted(true);
+                    user.getOrders().forEach(order -> order.setDeleted(true));
+                    return true;
+                })
+                .orElse(false);
     }
 }

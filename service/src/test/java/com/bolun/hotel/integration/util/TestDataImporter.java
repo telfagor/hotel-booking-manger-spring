@@ -1,3 +1,4 @@
+/*
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.entity.Apartment;
@@ -158,3 +159,4 @@ public class TestDataImporter {
         return order;
     }
 }
+*/

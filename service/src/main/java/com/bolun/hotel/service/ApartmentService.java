@@ -35,7 +35,7 @@ public class ApartmentService {
     }
 
     public Optional<ApartmentReadDto> findById(UUID id) {
-        return apartmentRepository.findById(id)
+        return apartmentRepository.findActiveById(id)
                 .map(apartmentReadMapper::mapFrom);
     }
 
@@ -53,7 +53,7 @@ public class ApartmentService {
 
     @Transactional
     public Optional<ApartmentReadDto> update(UUID id, ApartmentCreateEditDto apartmentDto) {
-        return apartmentRepository.findById(id)
+        return apartmentRepository.findActiveByIdWithLock(id)
                 .map(entity -> {
                     uploadImage(apartmentDto.photo());
                     return apartmentCreateEditMapper.mapFrom(apartmentDto, entity);
@@ -78,9 +78,9 @@ public class ApartmentService {
 
     @Transactional
     public boolean delete(UUID id) {
-        return apartmentRepository.findById(id)
-                .map(entity -> {
-                    apartmentRepository.delete(entity);
+       return apartmentRepository.findActiveByIdWithLock(id)
+                .map(apartment -> {
+                    apartment.setDeleted(true);
                     apartmentRepository.flush();
                     return true;
                 })

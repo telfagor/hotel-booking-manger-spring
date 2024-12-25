@@ -9,8 +9,6 @@ import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
-
 @Component
 @RequiredArgsConstructor
 public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
@@ -33,11 +31,11 @@ public class OrderReadMapper implements Mapper<Order, OrderReadDto> {
                 order.getStatus(),
                 user,
                 apartment,
-                order.getCreatedAt().atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                        order.getModifiedAt(),
-                        order.getCreatedBy(),
-                        order.getModifiedBy()
-                );
+                order.getCreatedAt(),
+                order.getModifiedAt(),
+                order.getCreatedBy(),
+                order.getModifiedBy()
+        );
     }
 
     private UserReadDto findUser(Order order) {

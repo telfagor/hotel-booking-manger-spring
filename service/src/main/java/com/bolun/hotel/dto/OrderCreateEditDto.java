@@ -12,7 +12,6 @@ public record OrderCreateEditDto(@NotNull(message = "Check-in is required")
                                  @FutureOrPresent(message = "Check-in must be in the present or future")
                                  @DateTimeFormat(pattern = "dd.MM.yyyy")
                                  LocalDate checkIn,
-
                                  @NotNull(message = "Check-Out is required")
                                  @Future(message = "Check-out must be in the future")
                                  @DateTimeFormat(pattern = "dd.MM.yyyy")
@@ -20,5 +19,13 @@ public record OrderCreateEditDto(@NotNull(message = "Check-in is required")
                                  UUID userId,
                                  UUID apartmentId) {
 
-
+    public OrderCreateEditDto(LocalDate checkIn,
+                              LocalDate checkOut,
+                              UUID userId,
+                              UUID apartmentId) {
+        this.checkIn = checkIn != null ? checkIn : LocalDate.now();
+        this.checkOut = checkOut;
+        this.userId = userId;
+        this.apartmentId = apartmentId;
+    }
 }
