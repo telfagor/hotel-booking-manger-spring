@@ -4,7 +4,6 @@ import com.bolun.hotel.entity.enums.Gender;
 import com.bolun.hotel.validation.PasswordMatcherValidator;
 import com.bolun.hotel.validation.PasswordsMatcher;
 import com.bolun.hotel.validation.UniqueEmail;
-import com.bolun.hotel.validation.UniquePhoneNumber;
 import com.bolun.hotel.validation.ValidPhoto;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
@@ -43,7 +42,6 @@ public record UserCreateEditDto(@NotBlank(message = "First name is required")
                                 Gender gender,
 
                                 @NotBlank(message = "Phone number is required", groups = UpdateAction.class)
-                                @UniquePhoneNumber(message = "This phone number is already registered")
                                 String phoneNumber,
 
                                 @NotNull(message = "Money is required", groups = UpdateAction.class)

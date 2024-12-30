@@ -12,13 +12,11 @@ public record UserFilter(String firstName,
                          Gender gender,
                          Role role,
                          String phoneNumber,
-                         String photo,
                          @DateTimeFormat(pattern = "dd.MM.yyyy")
                          LocalDate birthdateFrom,
                          @DateTimeFormat(pattern = "dd.MM.yyyy")
                          LocalDate birthdateTo,
                          Integer moneyFrom,
-
                          Integer moneyTo) {
 
 }

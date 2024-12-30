@@ -6,6 +6,7 @@ import com.bolun.hotel.dto.PageResponse;
 import com.bolun.hotel.dto.filters.ApartmentFilter;
 import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.service.ApartmentService;
+import com.bolun.hotel.util.AppConstantsUtil;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.groups.Default;
@@ -45,6 +46,8 @@ public class ApartmentController {
         Page<ApartmentReadDto> apartments = apartmentService.findAll(filter, pageable);
         model.addAttribute("data", PageResponse.of(apartments));
         model.addAttribute("filter", filter);
+        model.addAttribute("sortOptions", AppConstantsUtil.getApartmentSortOptions());
+        model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/apartments");
         return "apartment/apartments";
     }

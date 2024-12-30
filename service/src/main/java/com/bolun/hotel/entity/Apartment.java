@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(exclude = "orders")
+@EqualsAndHashCode(exclude = "orders", callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Cacheable
@@ -46,10 +46,10 @@ public class Apartment extends AuditingEntity<UUID> {
     private Integer apartmentNumber;
 
     @Column(name = "rooms", nullable = false)
-    private Integer roomNumber;
+    private Integer rooms;
 
     @Column(name = "seats", nullable = false)
-    private Integer seatNumber;
+    private Integer seats;
 
     @Column(name = "daily_cost", nullable = false)
     private Integer dailyCost;

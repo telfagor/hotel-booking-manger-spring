@@ -78,7 +78,7 @@ public class ApartmentService {
 
     @Transactional
     public boolean delete(UUID id) {
-       return apartmentRepository.findActiveByIdWithLock(id)
+        return apartmentRepository.findActiveByIdWithLock(id)
                 .map(apartment -> {
                     apartment.setDeleted(true);
                     apartmentRepository.flush();

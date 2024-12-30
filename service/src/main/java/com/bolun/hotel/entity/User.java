@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @Data
 @ToString(exclude = {"userDetail", "orders"})
-@EqualsAndHashCode(of = "email")
+@EqualsAndHashCode(of = "email", callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Cacheable

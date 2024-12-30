@@ -12,8 +12,8 @@ public class ApartmentReadMapper implements Mapper<Apartment, ApartmentReadDto> 
         return new ApartmentReadDto(
                 apartment.getId(),
                 apartment.getApartmentNumber(),
-                apartment.getRoomNumber(),
-                apartment.getSeatNumber(),
+                apartment.getRooms(),
+                apartment.getSeats(),
                 apartment.getDailyCost(),
                 apartment.getApartmentType(),
                 apartment.getPhoto()

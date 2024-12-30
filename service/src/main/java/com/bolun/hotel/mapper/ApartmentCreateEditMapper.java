@@ -4,8 +4,6 @@ import com.bolun.hotel.dto.ApartmentCreateEditDto;
 import com.bolun.hotel.entity.Apartment;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class ApartmentCreateEditMapper implements Mapper<ApartmentCreateEditDto, Apartment> {
 
@@ -23,12 +21,13 @@ public class ApartmentCreateEditMapper implements Mapper<ApartmentCreateEditDto,
     }
 
     private void copy(ApartmentCreateEditDto apartmentDto, Apartment apartment) {
-        apartment.setRoomNumber(apartmentDto.rooms());
-        apartment.setSeatNumber(apartmentDto.seats());
+        apartment.setRooms(apartmentDto.rooms());
+        apartment.setSeats(apartmentDto.seats());
         apartment.setDailyCost(apartmentDto.dailyCost());
         apartment.setApartmentType(apartmentDto.apartmentType());
 
-        Optional.of(apartmentDto.photo())
-                .ifPresent(photo -> apartment.setPhoto(photo.getOriginalFilename()));
+        if (apartmentDto.photo() != null && !apartmentDto.photo().isEmpty()) {
+            apartment.setPhoto(apartmentDto.photo().getOriginalFilename());
+        }
     }
 }
