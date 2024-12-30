@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <h3 class="text-center mb-4">Filter the orders</h3>
+    <h3 class="text-center mb-4 py-2">Filter the orders</h3>
     <form class="mb-4" th:action="@{/users/{id}(id=${user.id})}" th:object="${filter}">
         <div class="row g-3">
             <div class="col-md-6">
@@ -54,9 +54,14 @@
                 <input id="checkOut" type="text" name="checkOut" class="form-control" th:field="*{checkOut}">
             </div>
             <div class="col-md-6">
-                <label for="totalCost" class="form-label">Total cost</label>
-                <input id="totalCost" type="number" name="totalCost" class="form-control" min="1"
-                       th:field="*{totalCost}">
+                <label for="totalCostFrom" class="form-label">Total cost from</label>
+                <input id="totalCostFrom" type="number" name="totalCostFrom" class="form-control" min="1"
+                       th:field="*{totalCostFrom}">
+            </div>
+            <div class="col-md-6">
+                <label for="totalCostTo" class="form-label">Total cost to</label>
+                <input id="totalCostTo" type="number" name="totalCostTo" class="form-control" min="1"
+                       th:field="*{totalCostTo}">
             </div>
             <div class="col-md-6">
                 <label for="status" class="form-label">Order status</label>
@@ -76,10 +81,18 @@
         <button type="submit" class="btn btn-primary mt-3 w-100">Filter</button>
     </form>
 
+
     <div th:unless="${#lists.isEmpty(data.content)}">
         <h3 class="text-center mb-4" th:text="|${user.firstName} ${user.lastName} Orders List|"
             style="margin-top: 20px"></h3>
-        <div th:replace="~{fragments/page-size-fragment :: form}"></div>
+        <div class="row align-items-center mb-3">
+            <div class="col-md-6">
+                <div th:replace="~{fragments/sort-fragment :: sortForm}"></div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div th:replace="~{fragments/page-size-fragment :: pageSize}"></div>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
                 <thead class="table-dark">
@@ -113,6 +126,9 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div th:if="${#lists.isEmpty(data.content)}">
+        <p class="text-center">No orders yet</p>
     </div>
 </div>
 

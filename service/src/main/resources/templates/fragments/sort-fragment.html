@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sort form</title>
+    <div th:replace="~{fragments/background-fragment :: background-style}"></div>
+</head>
+<body>
+<div th:fragment="sortForm">
+    <form class="d-flex align-items-center w-100" method="get" th:action="@{${baseUrl}}">
+        <label for="sort" class="visually-hidden">Sort</label>
+        <select id="sort" name="sort" class="form-select me-2">
+            <option th:each="option : ${sortOptions}"
+                    th:value="${option.value}"
+                    th:text="${option.text}"
+                    th:selected="${option.value == selectedSort}">
+            </option>
+        </select>
+        <input type="hidden" name="page" th:value="${data.metadata.page}">
+        <input type="hidden" name="size" th:value="${data.metadata.size}">
+        <button type="submit" class="btn btn-primary">Sort</button>
+    </form>
+</div>
+</body>
+</html>

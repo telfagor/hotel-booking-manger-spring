@@ -1,24 +1,25 @@
 package com.bolun.hotel.validation;
 
 import com.bolun.hotel.dto.UserCreateEditDto;
+import com.bolun.hotel.dto.UserDetailReadDto;
+import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.User;
+import com.bolun.hotel.service.UserDetailService;
 import com.bolun.hotel.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-/**
- * Не знаю как использовать этот класс в dto только для CreateAction.
- * В UserCreateEditDto у меня @NotBlank и @Email нужны и для создания и для обновления
- * Этот класс как пример, решил через собственную аннотацию
- */
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
 public class UserValidator implements Validator {
 
     private final UserService userService;
+    private final UserDetailService userDetailService;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -27,14 +28,24 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        if (!errors.getObjectName().endsWith("UpdateAction")) {
-            return;
-        }
-
         UserCreateEditDto userDto = (UserCreateEditDto) o;
 
-        if (userService.findByEmail(userDto.email()).isPresent()) {
-            errors.rejectValue("email", "", "This email is already taken");
+        Optional<UserReadDto> userReadDto = userService.findByEmail(userDto.email());
+        boolean isPhoneNumberIsPresent = userDetailService.findByPhoneNumber(userDto.phoneNumber()).isPresent();
+
+        if (userReadDto.isPresent() && userReadDto.get().userDetail() != null) {
+            UserReadDto user = userReadDto.get();
+            UserDetailReadDto userDetail = user.userDetail();
+            if (user.email().equals(userDto.email()) && userDetail.phoneNumber().equals(userDto.phoneNumber())) {
+                return;
+            } else if (isPhoneNumberIsPresent) {
+                errors.rejectValue("phoneNumber", "", "This phone is already taken");
+                return;
+            }
+        }
+
+        if (StringUtils.hasText(userDto.phoneNumber()) && isPhoneNumberIsPresent) {
+                errors.rejectValue("phoneNumber", "", "This phone is already taken");
         }
     }
 }

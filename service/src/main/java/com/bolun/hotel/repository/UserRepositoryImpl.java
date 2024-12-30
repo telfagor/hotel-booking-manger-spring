@@ -1,8 +1,12 @@
 package com.bolun.hotel.repository;
 
 import com.bolun.hotel.dto.filters.UserFilter;
+import com.bolun.hotel.entity.QUser;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.util.QuerydslPredicate;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
@@ -10,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,12 +31,14 @@ public class UserRepositoryImpl implements FilterUserRepository {
     @Override
     public Page<User> findAll(UserFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
+        OrderSpecifier<?>[] usersOrderSpecifier = getUserOrderSpecifier(pageable.getSort(), user);
 
         List<User> users = new JPAQuery<>(entityManager)
                 .select(user)
                 .from(user)
                 .leftJoin(user.userDetail).fetchJoin()
                 .where(predicate, user.deleted.eq(false))
+                .orderBy(usersOrderSpecifier)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -63,5 +70,22 @@ public class UserRepositoryImpl implements FilterUserRepository {
                 .leftJoin(user.userDetail, userDetail)
                 .where(predicate)
                 .fetchOne();
+    }
+
+    public static OrderSpecifier<?>[] getUserOrderSpecifier(Sort sort, QUser user) {
+        return sort.stream()
+                .map(order -> {
+                    Expression<String> path = switch (order.getProperty()) {
+                        case "firstName" -> user.firstName;
+                        case "lastName" -> user.lastName;
+                        default -> throw new IllegalArgumentException("Invalid sort property: " + order.getProperty());
+                    };
+
+                    return new OrderSpecifier<>(
+                            order.isAscending() ? Order.ASC : Order.DESC,
+                            path
+                    );
+                })
+                .toArray(OrderSpecifier[]::new);
     }
 }

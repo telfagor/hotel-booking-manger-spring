@@ -33,6 +33,14 @@
                        th:field="*{dailyCostTo}">
             </div>
             <div class="col-md-6">
+                <label for="checkIn" class="form-label">Check-in</label>
+                <input id="checkIn" type="text" name="checkIn" class="form-control" min="1" th:field="*{checkIn}">
+            </div>
+            <div class="col-md-6">
+                <label for="checkOut" class="form-label">Check-out</label>
+                <input id="checkOut" type="text" name="checkOut" class="form-control" min="1" th:field="*{checkOut}">
+            </div>
+            <div class="col-md-6">
                 <label for="apartmentType" class="form-label">Apartment Type</label>
                 <select class="form-select" id="apartmentType" name="apartmentType">
                     <option value="" th:selected="${filter.apartmentType == null}">All Types</option>
@@ -41,21 +49,20 @@
                     </option>
                 </select>
             </div>
-            <div class="col-md-6">
-                <label for="checkIn" class="form-label">Check-in</label>
-                <input id="checkIn" type="text" name="checkIn" class="form-control" min="1" th:field="*{checkIn}">
-            </div>
-            <div class="col-md-6">
-                <label for="checkOut" class="form-label">Check-out</label>
-                <input id="checkOut" type="text" name="checkOut" class="form-control" min="1" th:field="*{checkOut}">
-            </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3 w-100">Filter</button>
     </form>
 
     <h4 class="mb-4 text-center" th:unless="${#lists.isEmpty(data.content)}">Available apartments!</h4>
+    <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+            <div th:replace="~{fragments/sort-fragment :: sortForm}"></div>
+        </div>
+        <div class="col-md-6 text-end">
+            <div th:replace="~{fragments/page-size-fragment :: pageSize}"></div>
+        </div>
+    </div>
 
-    <div th:replace="~{fragments/page-size-fragment :: form}"></div>
     <div class="row g-3" th:unless="${#lists.isEmpty(data.content)}">
         <div class="col-md-4" th:each="apartment : ${data.content}">
             <div class="card h-100">
@@ -77,7 +84,9 @@
         <p class="text-center">No apartments available</p>
     </div>
 
-    <div style="margin-top: 20px" th:insert="~{fragments/pagination-fragment :: nav}"></div>
+    <div style="margin-top: 20px" th:insert="~{fragments/pagination-fragment :: nav}">
+        <a th:href="@{${baseUrl} + '?page=${pageNumber}&sort=${selectedSort}'}">Next</a>
+    </div>
 
     <a th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}"
        href="/apartments/new" class="btn btn-success w-100 mt-3" >Add Apartment</a>

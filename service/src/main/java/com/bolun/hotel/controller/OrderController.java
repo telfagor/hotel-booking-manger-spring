@@ -10,6 +10,7 @@ import com.bolun.hotel.exception.InsufficientFundsException;
 import com.bolun.hotel.exception.InvalidAgeException;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.UserService;
+import com.bolun.hotel.util.AppConstantsUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,6 +52,8 @@ public class OrderController {
         Page<OrderReadDto> orders = orderService.findAll(filter, pageable);
         model.addAttribute("data", PageResponse.of(orders));
         model.addAttribute("filter", filter);
+        model.addAttribute("sortOptions", AppConstantsUtil.getOrderSortOptions());
+        model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/orders");
         return "order/orders";
     }

@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @Data
 @ToString(exclude = "user")
-@EqualsAndHashCode(of = "phoneNumber")
+@EqualsAndHashCode(of = "phoneNumber", callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Cacheable

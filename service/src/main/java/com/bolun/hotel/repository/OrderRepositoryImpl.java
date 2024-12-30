@@ -2,7 +2,10 @@ package com.bolun.hotel.repository;
 
 import com.bolun.hotel.dto.filters.OrderFilter;
 import com.bolun.hotel.entity.Order;
+import com.bolun.hotel.entity.QOrder;
 import com.bolun.hotel.util.QuerydslPredicate;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
@@ -10,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,6 +30,7 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
     @Override
     public Page<Order> findAll(OrderFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
+        OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifier(pageable.getSort(), order);
 
         List<Order> orders = new JPAQuery<>(entityManager)
                 .select(order)
@@ -33,6 +38,7 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
                 .join(order.apartment)
                 .join(order.user)
                 .where(predicate, order.deleted.eq(false))
+                .orderBy(orderSpecifiers)
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
@@ -66,11 +72,13 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
     @Override
     public Page<Order> findAllByUserId(UUID id, OrderFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
+        OrderSpecifier<?>[] userOrdersSpecifier = getOrderSpecifier(pageable.getSort(), order);
 
         List<Order> orders = new JPAQuery<>(entityManager)
                 .select(order)
                 .from(order)
                 .where(predicate, order.user.id.eq(id), order.deleted.eq(false))
+                .orderBy(userOrdersSpecifier)
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
@@ -87,5 +95,24 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
                 .from(order)
                 .where(predicate, order.user.id.eq(id), order.deleted.eq(false))
                 .fetchOne();
+    }
+
+    public static OrderSpecifier<?>[] getOrderSpecifier(Sort sort, QOrder userOrders) {
+        return sort.stream()
+                .map(order -> {
+                    Expression path = switch (order.getProperty()) {
+                        case "checkIn" -> userOrders.checkIn;
+                        case "checkOut" -> userOrders.checkOut;
+                        case "totalCost" -> userOrders.totalCost;
+                        case "email" -> userOrders.user.email;
+                        default -> throw new IllegalArgumentException("Invalid sort property: " + order.getProperty());
+                    };
+
+                    return new OrderSpecifier<>(
+                            order.isAscending() ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC,
+                            path
+                    );
+                })
+                .toArray(OrderSpecifier[]::new);
     }
 }

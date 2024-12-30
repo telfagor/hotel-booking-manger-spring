@@ -14,6 +14,8 @@ import com.bolun.hotel.service.CustomUserDetails;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.PasswordChangeResult;
 import com.bolun.hotel.service.UserService;
+import com.bolun.hotel.util.AppConstantsUtil;
+import com.bolun.hotel.validation.UserValidator;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.Valid;
@@ -48,6 +50,8 @@ public class UserController {
 
     private final UserService userService;
     private final OrderService orderService;
+
+    private final UserValidator userValidator;
     private final UserToUserCreateEditDtoMapper userToUserCreateEditDtoMapper;
 
     @ModelAttribute("genders")
@@ -60,6 +64,8 @@ public class UserController {
         Page<UserReadDto> userPage = userService.findAll(filter, pageable);
         model.addAttribute("data", PageResponse.of(userPage));
         model.addAttribute("filter", filter);
+        model.addAttribute("sortOptions", AppConstantsUtil.getUserSortOptions());
+        model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/users");
         return "user/users";
     }
@@ -73,6 +79,8 @@ public class UserController {
                     model.addAttribute("user", user);
                     model.addAttribute("data", PageResponse.of(orderPage));
                     model.addAttribute("orderStatuses", OrderStatus.values());
+                    model.addAttribute("sortOptions", AppConstantsUtil.getOrderSortOptions());
+                    model.addAttribute("selectedSort", pageable.getSort().toString());
                     model.addAttribute("filter", filter);
                     model.addAttribute("baseUrl", "/users/" + id);
                     return "user/user";
@@ -89,6 +97,7 @@ public class UserController {
     public String create(@ModelAttribute("user") @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
         if (bindingResult.hasErrors()) {
             return "user/registration";
         }
@@ -120,7 +129,7 @@ public class UserController {
     public String update(@ModelAttribute("id") @PathVariable("id") UUID id,
                          @ModelAttribute("user") @Validated({Default.class, UpdateAction.class}) UserCreateEditDto user,
                          BindingResult bindingResult) {
-
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             return "user/update-user";
         }
