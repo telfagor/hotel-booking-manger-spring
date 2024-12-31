@@ -72,7 +72,7 @@ public class UserRepositoryImpl implements FilterUserRepository {
                 .fetchOne();
     }
 
-    public static OrderSpecifier<?>[] getUserOrderSpecifier(Sort sort, QUser user) {
+    public static OrderSpecifier[] getUserOrderSpecifier(Sort sort, QUser user) {
         return sort.stream()
                 .map(order -> {
                     Expression<String> path = switch (order.getProperty()) {
