@@ -3,6 +3,9 @@ package com.bolun.hotel.mapper;
 import com.bolun.hotel.dto.ApartmentCreateEditDto;
 import com.bolun.hotel.entity.Apartment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Component
 public class ApartmentCreateEditMapper implements Mapper<ApartmentCreateEditDto, Apartment> {
@@ -26,8 +29,9 @@ public class ApartmentCreateEditMapper implements Mapper<ApartmentCreateEditDto,
         apartment.setDailyCost(apartmentDto.dailyCost());
         apartment.setApartmentType(apartmentDto.apartmentType());
 
-        if (apartmentDto.photo() != null && !apartmentDto.photo().isEmpty()) {
-            apartment.setPhoto(apartmentDto.photo().getOriginalFilename());
-        }
+        Optional.ofNullable(apartmentDto.photo())
+                .map(MultipartFile::getOriginalFilename)
+                .filter(filename -> !filename.isEmpty())
+                .ifPresent(apartment::setPhoto);
     }
 }
