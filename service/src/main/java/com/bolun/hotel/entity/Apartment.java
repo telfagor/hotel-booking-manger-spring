@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@EqualsAndHashCode(exclude = "orders", callSuper = false)
+@EqualsAndHashCode(exclude = {"orders", "deleted"}, callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Cacheable

@@ -38,7 +38,8 @@
             </div>
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone number</label>
-                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}"
+                       pattern="^\(\+373\) \d{8}$" placeholder="(+373) 67643434">
                 <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
             </div>
             <div class="mb-3">

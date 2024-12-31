@@ -10,6 +10,7 @@ import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,6 +43,11 @@ public record UserCreateEditDto(@NotBlank(message = "First name is required")
                                 Gender gender,
 
                                 @NotBlank(message = "Phone number is required", groups = UpdateAction.class)
+                                @Pattern(
+                                        regexp = "^\\(\\+373\\) \\d{8}$",
+                                        message = "Phone number must match the format (+373) 67643434",
+                                        groups = UpdateAction.class
+                                )
                                 String phoneNumber,
 
                                 @NotNull(message = "Money is required", groups = UpdateAction.class)

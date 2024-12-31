@@ -45,13 +45,12 @@ public class ApartmentRepositoryImpl implements FilterApartmentRepository {
                 .leftJoin(apartment.orders, order)
                 .on(order.status.eq(APPROVED), availabilityCondition)
                 .where(predicate, order.isNull(), apartment.deleted.eq(false))
+                .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(orderSpecifiers)
                 .fetch();
 
         long totalElements = getTotalElements(predicate, availabilityCondition);
-
         return new PageImpl<>(apartments, pageable, totalElements);
     }
 
@@ -65,8 +64,7 @@ public class ApartmentRepositoryImpl implements FilterApartmentRepository {
                 .buildAnd();
     }
 
-    private Long getTotalElements(Predicate predicate,
-                                  BooleanExpression availabilityCondition) {
+    private Long getTotalElements(Predicate predicate, BooleanExpression availabilityCondition) {
         return new JPAQuery<>(entityManager)
                 .select(apartment.count())
                 .from(apartment)
@@ -76,7 +74,7 @@ public class ApartmentRepositoryImpl implements FilterApartmentRepository {
                 .fetchOne();
     }
 
-    public static OrderSpecifier<?>[] getApartmentOrderSpecifier(Sort sort, QApartment apartment) {
+    public static OrderSpecifier[] getApartmentOrderSpecifier(Sort sort, QApartment apartment) {
         return sort.stream()
                 .map(order -> {
                     Expression<Integer> path = switch (order.getProperty()) {
