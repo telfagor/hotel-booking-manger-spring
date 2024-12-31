@@ -14,7 +14,10 @@ public class MultipartFileValidator implements ConstraintValidator<ValidPhoto, M
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
         if (file == null || file.isEmpty()) {
-            return true;
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Photo is required")
+                    .addConstraintViolation();
+            return false;
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {

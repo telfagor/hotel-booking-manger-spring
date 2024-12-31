@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cache;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @ToString(exclude = {"apartment", "user"})
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = "deleted", callSuper = false)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "entityCache")
 @Builder
