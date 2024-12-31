@@ -24,6 +24,7 @@ public record ApartmentCreateEditDto(@NotNull(message = "Rooms are required")
                                      @Max(value = 120, message = "At most $120")
                                      Integer dailyCost,
 
+                                     @NotNull(message = "Apartment type is required")
                                      ApartmentType apartmentType,
 
                                      @NotNull(message = "Photo is required", groups = CreateAction.class)
