@@ -97,7 +97,7 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
                 .fetchOne();
     }
 
-    public static OrderSpecifier<?>[] getOrderSpecifier(Sort sort, QOrder userOrders) {
+    public static OrderSpecifier[] getOrderSpecifier(Sort sort, QOrder userOrders) {
         return sort.stream()
                 .map(order -> {
                     Expression path = switch (order.getProperty()) {

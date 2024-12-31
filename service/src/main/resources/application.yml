@@ -39,6 +39,6 @@ app:
   image:
     bucket: C:\Users\Admin\IdeaProjects\hotel-booking-manager-spring\service\images
 
-
+order.adult.age: 18
 
 

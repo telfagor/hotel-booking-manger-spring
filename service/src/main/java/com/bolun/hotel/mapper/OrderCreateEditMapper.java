@@ -3,17 +3,14 @@ package com.bolun.hotel.mapper;
 import com.bolun.hotel.dto.OrderCreateEditDto;
 import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
-import com.bolun.hotel.entity.UserDetail;
-import com.bolun.hotel.exception.InsufficientFundsException;
-import com.bolun.hotel.exception.InvalidAgeException;
 import com.bolun.hotel.repository.ApartmentRepository;
 import com.bolun.hotel.repository.UserRepository;
+import com.bolun.hotel.service.OrderValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -23,9 +20,9 @@ import static com.bolun.hotel.entity.enums.OrderStatus.IN_PROGRESS;
 @RequiredArgsConstructor
 public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> {
 
-    private static final int ADULT_AGE = 18;
     private final UserRepository userRepository;
     private final ApartmentRepository apartmentRepository;
+    private final OrderValidationService orderValidationService;
 
     @Override
     public Order mapFrom(OrderCreateEditDto orderDto) {
@@ -50,10 +47,8 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .ifPresent(order::setApartment);
 
         maybeUser.ifPresent(user -> {
-            UserDetail userDetail = user.getUserDetail();
-            checkAge(userDetail);
-            checkTotalCost(order, userDetail);
             int totalCost = calculateTotalCost(order);
+            orderValidationService.validateUserOrder(user, totalCost);
             order.setTotalCost(totalCost);
             order.add(user);
         });
@@ -64,20 +59,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
                 .map(authentication -> (UserDetails) authentication.getPrincipal())
                 .map(UserDetails::getUsername)
                 .flatMap(userRepository::findByEmail);
-    }
-
-    private void checkAge(UserDetail userDetail) {
-        int age = (int) ChronoUnit.YEARS.between(userDetail.getBirthdate(), LocalDate.now());
-        if (age < ADULT_AGE) {
-            throw new InvalidAgeException("Invalid age. You are minor.");
-        }
-    }
-
-    private void checkTotalCost(Order order, UserDetail userDetail) {
-        Integer totalCost = calculateTotalCost(order);
-        if (userDetail.getMoney() < totalCost) {
-            throw new InsufficientFundsException("Insufficient funds");
-        }
     }
 
     private int calculateTotalCost(Order order) {
