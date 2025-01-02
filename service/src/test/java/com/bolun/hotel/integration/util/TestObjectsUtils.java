@@ -1,7 +1,7 @@
-/*
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.dto.ApartmentReadDto;
+import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.entity.Apartment;
 import com.bolun.hotel.entity.Order;
@@ -50,10 +50,11 @@ public class TestObjectsUtils {
 
     public Apartment getApartment() {
         return Apartment.builder()
-                .roomNumber(random.nextInt(5) + 1)
-                .seatNumber(random.nextInt(8) + 2)
-                .dailyCost(random.nextInt(1000) + 100)
-                .apartmentType(getRandomEnumValue(ApartmentType.class))
+                .rooms(random.nextInt(5) + 1)
+                .seats(random.nextInt(8) + 2)
+                .apartmentNumber(1)
+                .dailyCost(50)
+                .apartmentType(ApartmentType.STANDARD)
                 .photo("path/to/photo.png")
                 .build();
     }
@@ -75,7 +76,8 @@ public class TestObjectsUtils {
                 "john@example.com",
                 Gender.MALE,
                 Role.USER,
-                null);
+                null
+        );
     }
 
    public UserReadDto getGetUserReadDto2() {
@@ -89,22 +91,25 @@ public class TestObjectsUtils {
                 null);
    }
 
-   */
-/*public UserCreateEditDto getUserCreateEditDto(String email) {
+public UserCreateEditDto getUserCreateEditDto(String email) {
         return new UserCreateEditDto(
                 "test",
                 "test",
                 email,
                 "test",
                 "test",
-                Gender.MALE
+                Gender.MALE,
+                null,
+                null,
+                null,
+                null
         );
-    }*//*
-
+    }
 
     public ApartmentReadDto getApartmentReadDto(UUID id) {
         return new ApartmentReadDto(
                 id,
+                2,
                 2,
                 4,
                 35,
@@ -114,4 +119,3 @@ public class TestObjectsUtils {
     }
 }
 
-*/
