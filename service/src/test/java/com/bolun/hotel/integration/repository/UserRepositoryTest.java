@@ -1,16 +1,26 @@
-/*
 package com.bolun.hotel.integration.repository;
 
+import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.entity.User;
+import com.bolun.hotel.entity.enums.Gender;
+import com.bolun.hotel.entity.enums.Role;
 import com.bolun.hotel.integration.IntegrationTestBase;
+import com.bolun.hotel.integration.util.TestDataImporter;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -65,18 +75,62 @@ class UserRepositoryTest extends IntegrationTestBase {
         assertThat(actualUser).isEmpty();
     }
 
-    @Test
-    void findAll() {
-        User user1 = userRepository.save(TestObjectsUtils.getUser("test@gmail.com"));
-        User user2 = userRepository.save(TestObjectsUtils.getUser("test2@gmail.com"));
-        User user3 = userRepository.save(TestObjectsUtils.getUser("test3@gmail.com"));
+    @MethodSource("getMethodArguments")
+    @ParameterizedTest
+    void findAll(UserFilter filter, long expectedUsersSize) {
+        TestDataImporter.importData(session);
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
 
-        List<User> users = userRepository.findAll();
+        Page<User> actualResult = userRepository.findAll(filter, pageable);
 
-        List<String> emails = users.stream()
-                .map(User::getEmail)
-                .toList();
-        assertThat(emails).containsExactlyInAnyOrder(user1.getEmail(), user2.getEmail(), user3.getEmail());
+        assertThat(actualResult.getTotalElements()).isEqualTo(expectedUsersSize);
+    }
+
+    static Stream<Arguments> getMethodArguments() {
+        return Stream.of(
+                Arguments.of(
+                        new UserFilter(
+                                "Andrei",
+                                "Chirtoaca",
+                                "andrei.chirtoaca@gmail.com",
+                                Gender.MALE,
+                                Role.ADMIN,
+                                "1",
+                                LocalDate.of(2005, 9, 19),
+                                LocalDate.of(2005, 9, 19),
+                                1500,
+                                1500
+                        ), 1L
+                ),
+                Arguments.of(
+                        new UserFilter(
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                1000,
+                                1500
+                        ), 6L
+                ),
+                Arguments.of(
+                        new UserFilter(
+                                null,
+                                null,
+                                "tudor",
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                1000,
+                                1500
+                        ), 2L
+                )
+        );
     }
 
     @Test
@@ -89,4 +143,3 @@ class UserRepositoryTest extends IntegrationTestBase {
         assertThat(actualUser).isEmpty();
     }
 }
-*/

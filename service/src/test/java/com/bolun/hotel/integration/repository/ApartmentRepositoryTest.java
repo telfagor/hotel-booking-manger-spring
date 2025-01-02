@@ -1,4 +1,3 @@
-/*
 package com.bolun.hotel.integration.repository;
 
 import com.bolun.hotel.dto.filters.ApartmentFilter;
@@ -42,8 +41,8 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
     @Test
     void update() {
         Apartment apartment = apartmentRepository.save(TestObjectsUtils.getApartment());
-        apartment.setRoomNumber(1);
-        apartment.setSeatNumber(4);
+        apartment.setRooms(1);
+        apartment.setSeats(4);
 
         apartmentRepository.saveAndFlush(apartment);
         session.clear();
@@ -51,7 +50,13 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
         assertThat(actualApartment)
                 .isPresent()
-                .contains(apartment);
+                .hasValueSatisfying(a -> {
+                    assertThat(a.getRooms()).isEqualTo(1);
+                    assertThat(a.getSeats()).isEqualTo(4);
+                    assertThat(a.getDailyCost()).isEqualTo(50);
+                    assertThat(a.getApartmentType()).isSameAs(ApartmentType.STANDARD);
+                    assertThat(a.getPhoto()).isEqualTo("path/to/photo.png");
+                });
     }
 
     @Test
@@ -77,53 +82,41 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
     @ParameterizedTest
     @MethodSource("getMethodArguments")
-    void checkApartmentFilter(ApartmentFilter filter, Integer expectedApartmentSize) {
+    void checkApartmentFilter(ApartmentFilter filter, long expectedApartmentSize) {
         TestDataImporter.importData(session);
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
 
         Page<Apartment> actualResult = apartmentRepository.findAll(filter, pageable);
 
-        assertThat(actualResult).hasSize(expectedApartmentSize);
+        assertThat(actualResult.getTotalElements()).isEqualTo(expectedApartmentSize);
     }
 
     static Stream<Arguments> getMethodArguments() {
         return Stream.of(
                 Arguments.of(
-                        ApartmentFilter.builder()
-                                .rooms(null)
-                                .seats(null)
-                                .dailyCost(null)
-                                .apartmentType(null)
-                                .checkIn(LocalDate.of(2024, 4, 20))
-                                .checkOut(LocalDate.of(2024, 4, 26))
-                                .build(), 4),
+                        new ApartmentFilter(
+                                null, null, null, null, null,
+                                LocalDate.of(2024, 4, 20),
+                                LocalDate.of(2024, 4, 26)
+                        ), 5L),
                 Arguments.of(
-                        ApartmentFilter.builder()
-                                .rooms(2)
-                                .seats(null)
-                                .dailyCost(null)
-                                .apartmentType(null)
-                                .checkIn(LocalDate.of(2024, 4, 20))
-                                .checkOut(LocalDate.of(2024, 4, 26))
-                                .build(), 2),
+                        new ApartmentFilter(
+                                2, null, null, null, null,
+                                LocalDate.of(2024, 4, 20),
+                                LocalDate.of(2024, 4, 26)
+                        ), 2L),
                 Arguments.of(
-                        ApartmentFilter.builder()
-                                .rooms(3)
-                                .seats(6)
-                                .dailyCost(null)
-                                .apartmentType(ApartmentType.LUX)
-                                .checkIn(LocalDate.of(2024, 5, 4))
-                                .checkOut(LocalDate.of(2024, 5, 5))
-                                .build(), 1),
+                        new ApartmentFilter(
+                                3, 6, null, null, ApartmentType.LUX,
+                                LocalDate.of(2024, 5, 4),
+                                LocalDate.of(2024, 5, 5)
+                        ), 1L),
                 Arguments.of(
-                        ApartmentFilter.builder()
-                                .rooms(300)
-                                .seats(600)
-                                .dailyCost(Integer.MAX_VALUE)
-                                .apartmentType(null)
-                                .checkIn(LocalDate.of(2024, 5, 4))
-                                .checkOut(LocalDate.of(2024, 5, 5))
-                                .build(), 0)
+                        new ApartmentFilter(
+                                300, 600, Integer.MAX_VALUE, null, null,
+                                LocalDate.of(2024, 5, 4),
+                                LocalDate.of(2024, 5, 5)
+                        ), 0L)
         );
     }
 
@@ -137,4 +130,3 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
         assertThat(actualApartment).isEmpty();
     }
 }
-*/

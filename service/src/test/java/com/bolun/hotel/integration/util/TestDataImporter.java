@@ -1,4 +1,3 @@
-/*
 package com.bolun.hotel.integration.util;
 
 import com.bolun.hotel.entity.Apartment;
@@ -19,8 +18,8 @@ import java.time.LocalDate;
 public class TestDataImporter {
 
     public void importData(Session session) {
-        User andrei = saveUser(session, "Andrei", "Chirtoaca", "andrei@gmail",
-                "123", Role.USER, Gender.MALE);
+        User andreiBolun = saveUser(session, "Andrei", "Chirtoaca", "andrei.chirtoaca@gmail.com",
+                "123", Role.ADMIN, Gender.MALE);
         User christina = saveUser(session, "Christina", "Aguilera", "christina@gmail.com",
                 "123", Role.USER, Gender.FEMALE);
         User ivan = saveUser(session, "Ivan", "King", "ivan@gmail.com",
@@ -31,9 +30,11 @@ public class TestDataImporter {
                 "456", Role.USER, Gender.MALE);
         User tudorAgache = saveUser(session, "Tudor", "Agache", "tudor_agache@gmail.com",
                 "456", Role.USER, Gender.MALE);
+        User andreiBranzila = saveUser(session, "Andrei", "Branzila", "branzila.andrei@gmail.com",
+                "456", Role.USER, Gender.MALE);
 
-        UserDetail andreiUserDetail = saveUserDetail(session, andrei, "1",
-                LocalDate.now().minusYears(20), 300);
+        UserDetail andreiBolunUserDetail = saveUserDetail(session, andreiBolun, "1",
+                LocalDate.of(2005, 9, 19), 1500);
         UserDetail christinaUserDetail = saveUserDetail(session, christina, "2",
                 LocalDate.now().minusYears(20), 700);
         UserDetail ivanUserDetail = saveUserDetail(session, ivan, "3",
@@ -44,6 +45,8 @@ public class TestDataImporter {
                 LocalDate.now().minusYears(24), 1000);
         UserDetail tudorAgacheUserDetail = saveUserDetail(session, tudorAgache, "6",
                 LocalDate.now().minusYears(24), 1500);
+        UserDetail andreiBranzilaUserDetail = saveUserDetail(session, andreiBranzila, "7",
+                LocalDate.now().minusYears(24), 1500);
 
         Apartment apartment1 = saveApartment(session, 2, 4, 25, ApartmentType.STANDARD);
         Apartment apartment2 = saveApartment(session, 3, 6, 30, ApartmentType.LUX);
@@ -51,7 +54,7 @@ public class TestDataImporter {
         Apartment apartment4 = saveApartment(session, 3, 7, 40, ApartmentType.LUX);
         Apartment apartment5 = saveApartment(session, 2, 5, 35, ApartmentType.STANDARD);
 
-        Order andreiOrder = saveOrder(session, andrei, apartment1,
+        Order andreiOrder = saveOrder(session, andreiBolun, apartment1,
                 LocalDate.now(),
                 LocalDate.now().plusDays(2), 1200, OrderStatus.APPROVED);
         Order christinaOrder = saveOrder(session, christina, apartment2,
@@ -132,8 +135,8 @@ public class TestDataImporter {
                                    ApartmentType type) {
 
         Apartment apartment = Apartment.builder()
-                .roomNumber(roomNumber)
-                .seatNumber(seatNumber)
+                .rooms(roomNumber)
+                .seats(seatNumber)
                 .dailyCost(dailyCost)
                 .apartmentType(type)
                 .photo("path/to/photo.png")
@@ -159,4 +162,3 @@ public class TestDataImporter {
         return order;
     }
 }
-*/

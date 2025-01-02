@@ -1,4 +1,3 @@
-/*
 package com.bolun.hotel.integration;
 
 import com.bolun.hotel.integration.annotation.IT;
@@ -29,4 +28,3 @@ public abstract class IntegrationTestBase {
     }
 }
 
-*/
