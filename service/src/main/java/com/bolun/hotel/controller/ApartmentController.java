@@ -6,7 +6,6 @@ import com.bolun.hotel.dto.PageResponse;
 import com.bolun.hotel.dto.filters.ApartmentFilter;
 import com.bolun.hotel.entity.enums.ApartmentType;
 import com.bolun.hotel.service.ApartmentService;
-import com.bolun.hotel.util.AppConstantsUtil;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
 import jakarta.validation.groups.Default;
@@ -27,12 +26,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/apartments")
 @RequiredArgsConstructor
 public class ApartmentController {
+
+    private static final List<Map<String, String>> APARTMENT_SORT_OPTIONS = List.of(
+            Map.of("value", "dailyCost,asc", "text", "Daily Cost (Low to High)"),
+            Map.of("value", "dailyCost,desc", "text", "Daily Cost (High to Low)"),
+            Map.of("value", "seats,asc", "text", "Seats (Low to High)"),
+            Map.of("value", "seats,desc", "text", "Seats (High to Low)"),
+            Map.of("value", "rooms,asc", "text", "Rooms (Low to High)"),
+            Map.of("value", "rooms,desc", "text", "Rooms (High to Low)")
+    );
 
     private final ApartmentService apartmentService;
 
@@ -46,7 +55,7 @@ public class ApartmentController {
         Page<ApartmentReadDto> apartments = apartmentService.findAll(filter, pageable);
         model.addAttribute("data", PageResponse.of(apartments));
         model.addAttribute("filter", filter);
-        model.addAttribute("sortOptions", AppConstantsUtil.getApartmentSortOptions());
+        model.addAttribute("sortOptions", APARTMENT_SORT_OPTIONS);
         model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/apartments");
         return "apartment/apartments";

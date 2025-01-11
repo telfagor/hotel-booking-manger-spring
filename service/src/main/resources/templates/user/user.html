@@ -44,6 +44,7 @@
 
     <h3 class="text-center mb-4 py-2">Filter the orders</h3>
     <form class="mb-4" th:action="@{/users/{id}(id=${user.id})}" th:object="${filter}">
+        <input type="hidden" name="userId" th:value="${user.id}">
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="checkIn" class="form-label">Check-in</label>
@@ -109,7 +110,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="order, iterStat : ${data.content}">
-                    <td th:text="${iterStat.index + 1 + (data.metadata.page + data.metadata.size)}"></td>
+                    <td th:text="${iterStat.index + 1 + (data.metadata.page * data.metadata.size)}"></td>
                     <td th:text="${order.checkIn}"></td>
                     <td th:text="${order.checkOut}"></td>
                     <td th:text="${order.totalCost}"></td>

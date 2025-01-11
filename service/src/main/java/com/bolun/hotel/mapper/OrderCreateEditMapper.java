@@ -5,7 +5,6 @@ import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.repository.ApartmentRepository;
 import com.bolun.hotel.repository.UserRepository;
-import com.bolun.hotel.service.OrderValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
 
     private final UserRepository userRepository;
     private final ApartmentRepository apartmentRepository;
-    private final OrderValidationService orderValidationService;
 
     @Override
     public Order mapFrom(OrderCreateEditDto orderDto) {
@@ -48,7 +46,6 @@ public class OrderCreateEditMapper implements Mapper<OrderCreateEditDto, Order> 
 
         maybeUser.ifPresent(user -> {
             int totalCost = calculateTotalCost(order);
-            orderValidationService.validateUserOrder(user, totalCost);
             order.setTotalCost(totalCost);
             order.add(user);
         });

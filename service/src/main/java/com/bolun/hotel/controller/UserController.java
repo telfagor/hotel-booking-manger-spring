@@ -14,7 +14,6 @@ import com.bolun.hotel.service.CustomUserDetails;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.PasswordChangeResult;
 import com.bolun.hotel.service.UserService;
-import com.bolun.hotel.util.AppConstantsUtil;
 import com.bolun.hotel.validation.UserValidator;
 import com.bolun.hotel.validation.group.CreateAction;
 import com.bolun.hotel.validation.group.UpdateAction;
@@ -39,6 +38,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.bolun.hotel.entity.enums.Role.ADMIN;
@@ -48,9 +48,26 @@ import static com.bolun.hotel.entity.enums.Role.ADMIN;
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final List<Map<String, String>> USER_SORT_OPTIONS = List.of(
+            Map.of("value", "firstName,asc", "text", "First Name (A-Z)"),
+            Map.of("value", "firstName,desc", "text", "First Name (Z-A)"),
+            Map.of("value", "lastName,asc", "text", "Last Name (A-Z)"),
+            Map.of("value", "lastName,desc", "text", "Last Name (Z-A)")
+    );
+
+    private static final List<Map<String, String>> ORDER_SORT_OPTIONS = List.of(
+            Map.of("value", "checkIn,asc", "text", "Check In (Ascending)"),
+            Map.of("value", "checkIn,desc", "text", "Check In (Descending)"),
+            Map.of("value", "checkOut,asc", "text", "Check Out (Ascending)"),
+            Map.of("value", "checkOut,desc", "text", "Check Out (Descending)"),
+            Map.of("value", "totalCost,asc", "text", "Total Cost (Low to High)"),
+            Map.of("value", "totalCost,desc", "text", "Total Cost (High to Low)"),
+            Map.of("value", "email,asc", "text", "Email (A-Z)"),
+            Map.of("value", "email,desc", "text", "Email (Z-A)")
+    );
+
     private final UserService userService;
     private final OrderService orderService;
-
     private final UserValidator userValidator;
     private final UserToUserCreateEditDtoMapper userToUserCreateEditDtoMapper;
 
@@ -59,12 +76,13 @@ public class UserController {
         return Arrays.asList(Gender.values());
     }
 
+
     @GetMapping
     public String findAll(Model model, UserFilter filter, Pageable pageable) {
         Page<UserReadDto> userPage = userService.findAll(filter, pageable);
         model.addAttribute("data", PageResponse.of(userPage));
         model.addAttribute("filter", filter);
-        model.addAttribute("sortOptions", AppConstantsUtil.getUserSortOptions());
+        model.addAttribute("sortOptions", USER_SORT_OPTIONS);
         model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/users");
         return "user/users";
@@ -75,11 +93,11 @@ public class UserController {
     public String findById(@PathVariable("id") UUID id, Model model, OrderFilter filter, Pageable pageable) {
         return userService.findById(id)
                 .map(user -> {
-                    Page<OrderReadDto> orderPage = orderService.findOrdersByUserId(id, filter, pageable);
+                    Page<OrderReadDto> orderPage = orderService.findAll(id, filter, pageable);
                     model.addAttribute("user", user);
                     model.addAttribute("data", PageResponse.of(orderPage));
                     model.addAttribute("orderStatuses", OrderStatus.values());
-                    model.addAttribute("sortOptions", AppConstantsUtil.getOrderSortOptions());
+                    model.addAttribute("sortOptions", ORDER_SORT_OPTIONS);
                     model.addAttribute("selectedSort", pageable.getSort().toString());
                     model.addAttribute("filter", filter);
                     model.addAttribute("baseUrl", "/users/" + id);
@@ -97,7 +115,6 @@ public class UserController {
     public String create(@ModelAttribute("user") @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
                          BindingResult bindingResult,
                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-
         if (bindingResult.hasErrors()) {
             return "user/registration";
         }
@@ -115,7 +132,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN') or #id == principal.id")
     @GetMapping("/{id}/update")
     public String getUpdateUserPage(@PathVariable("id") UUID id, Model model) {
-
         return userService.findById(id, userToUserCreateEditDtoMapper)
                 .map(user -> {
                     model.addAttribute("user", user);
@@ -180,12 +196,11 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        boolean isAdmin = customUserDetails.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.equals(ADMIN));
-
-        if (isAdmin) {
+        if (customUserDetails.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.equals(ADMIN))) {
             return "redirect:/users";
         }
+
         return "redirect:/login";
     }
 }

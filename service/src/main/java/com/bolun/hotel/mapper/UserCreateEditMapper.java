@@ -35,6 +35,7 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
         user.setLastName(userDto.lastName());
         user.setEmail(userDto.email());
         user.setGender(userDto.gender());
+        user.setRole(userDto.role());
 
         if (StringUtils.hasText(userDto.phoneNumber())) {
             UserDetail userDetail = new UserDetail();

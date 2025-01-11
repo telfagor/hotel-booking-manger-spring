@@ -28,7 +28,7 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
     private final EntityManager entityManager;
 
     @Override
-    public Page<Order> findAll(OrderFilter filter, Pageable pageable) {
+    public Page<Order> findAll(UUID userId, OrderFilter filter, Pageable pageable) {
         Predicate predicate = getPredicate(filter);
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifier(pageable.getSort(), order);
 
@@ -47,18 +47,6 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
         return new PageImpl<>(orders, pageable, totalOrders);
     }
 
-    private Predicate getPredicate(OrderFilter filter) {
-        return QuerydslPredicate.builder()
-                .add(filter.checkIn(), order.checkIn::goe)
-                .add(filter.checkOut(), order.checkOut::loe)
-                .add(filter.totalCostFrom(), order.totalCost::goe)
-                .add(filter.totalCostTo(), order.totalCost::loe)
-                .add(filter.apartmentNumber(), order.apartment.apartmentNumber::eq)
-                .add(filter.status(), order.status::eq)
-                .add(filter.email(), order.user.email::equalsIgnoreCase)
-                .buildAnd();
-    }
-
     private Long getTotalOrders(Predicate predicate) {
         return new JPAQuery<>(entityManager)
                 .select(order.count())
@@ -69,32 +57,17 @@ public class OrderRepositoryImpl implements FilterOrderRepository {
                 .fetchOne();
     }
 
-    @Override
-    public Page<Order> findAllByUserId(UUID id, OrderFilter filter, Pageable pageable) {
-        Predicate predicate = getPredicate(filter);
-        OrderSpecifier<?>[] userOrdersSpecifier = getOrderSpecifier(pageable.getSort(), order);
-
-        List<Order> orders = new JPAQuery<>(entityManager)
-                .select(order)
-                .from(order)
-                .where(predicate, order.user.id.eq(id), order.deleted.eq(false))
-                .orderBy(userOrdersSpecifier)
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .fetch();
-
-        long totalOrders = getTotalOrdersByUserId(id, filter);
-        return new PageImpl<>(orders, pageable, totalOrders);
-    }
-
-    private Long getTotalOrdersByUserId(UUID id, OrderFilter filter) {
-        Predicate predicate = getPredicate(filter);
-
-        return new JPAQuery<>(entityManager)
-                .select(order.count())
-                .from(order)
-                .where(predicate, order.user.id.eq(id), order.deleted.eq(false))
-                .fetchOne();
+    private Predicate getPredicate(OrderFilter filter) {
+        return QuerydslPredicate.builder()
+                .add(filter.userId(), order.user.id::eq)
+                .add(filter.checkIn(), order.checkIn::goe)
+                .add(filter.checkOut(), order.checkOut::loe)
+                .add(filter.totalCostFrom(), order.totalCost::goe)
+                .add(filter.totalCostTo(), order.totalCost::loe)
+                .add(filter.apartmentNumber(), order.apartment.apartmentNumber::eq)
+                .add(filter.status(), order.status::eq)
+                .add(filter.email(), order.user.email::equalsIgnoreCase)
+                .buildAnd();
     }
 
     public static OrderSpecifier[] getOrderSpecifier(Sort sort, QOrder userOrders) {

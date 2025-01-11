@@ -1,37 +1,58 @@
 package com.bolun.hotel.service;
 
-import com.bolun.hotel.entity.User;
-import com.bolun.hotel.entity.UserDetail;
+import com.bolun.hotel.dto.ApartmentReadDto;
+import com.bolun.hotel.dto.OrderCreateEditDto;
+import com.bolun.hotel.dto.UserDetailReadDto;
+import com.bolun.hotel.dto.UserReadDto;
+import com.bolun.hotel.exception.ApartmentNotFoundException;
 import com.bolun.hotel.exception.InsufficientFundsException;
-import com.bolun.hotel.exception.InvalidAgeException;
+import com.bolun.hotel.exception.MinorAgeException;
+import com.bolun.hotel.exception.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@RequiredArgsConstructor
 @Component
 public class OrderValidationService {
 
-    @Value("${order.adult.age:18}")
-    private int adultAge;
+    @Value("${order.adult.age}")
+    private final int adultAge;
+    private final UserService userService;
+    private final ApartmentService apartmentService;
 
-    public void validateUserOrder(User user, int totalCost) {
-        UserDetail userDetail = user.getUserDetail();
+
+    public void validateUserOrder(OrderCreateEditDto order) {
+        UserReadDto user = userService.findById(order.userId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        ApartmentReadDto apartment = apartmentService.findById(order.apartmentId())
+                .orElseThrow(() -> new ApartmentNotFoundException("Apartment not found"));
+
+        UserDetailReadDto userDetail = user.userDetail();
         checkAge(userDetail);
+        int totalCost = calculateTotalCost(order, apartment);
         checkTotalCost(userDetail, totalCost);
     }
 
-    private void checkAge(UserDetail userDetail) {
-        int age = (int) ChronoUnit.YEARS.between(userDetail.getBirthdate(), LocalDate.now());
+    private void checkAge(UserDetailReadDto userDetail) {
+        int age = (int) ChronoUnit.YEARS.between(userDetail.birthdate(), LocalDate.now());
         if (age < adultAge) {
-            throw new InvalidAgeException("Invalid age. You are minor.");
+            throw new MinorAgeException("Invalid age. You are minor.");
         }
     }
 
-    private void checkTotalCost(UserDetail userDetail, int totalCost) {
-        if (userDetail.getMoney() < totalCost) {
+    private void checkTotalCost(UserDetailReadDto userDetail, int totalCost) {
+        if (userDetail.money() < totalCost) {
             throw new InsufficientFundsException("Insufficient funds");
         }
+    }
+
+    private int calculateTotalCost(OrderCreateEditDto order, ApartmentReadDto apartment) {
+        long reservationDays = ChronoUnit.DAYS.between(order.getCheckIn(), order.getCheckOut());
+        return (int) reservationDays * apartment.dailyCost();
     }
 }

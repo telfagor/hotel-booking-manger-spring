@@ -38,7 +38,7 @@ public class UserDetailService {
 
     @Transactional
     public Optional<UserDetailReadDto> update(UUID id, UserDetailCreateEditDto userDetailDto) {
-        return userDetailRepository.findById(id)
+        return userDetailRepository.findActiveByUserIdWithLock(id)
                 .map(entity -> {
                     uploadImage(userDetailDto.photo());
                     return userDetailCreateEditMapper.mapFrom(userDetailDto, entity);
@@ -52,11 +52,6 @@ public class UserDetailService {
         if (!photo.isEmpty()) {
             imageService.upload(photo.getOriginalFilename(), photo.getInputStream());
         }
-    }
-
-    public Optional<UserDetailReadDto> findByUserId(UUID userId) {
-        return userDetailRepository.findActiveByUserId(userId)
-                .map(userDetailReadMapper::mapFrom);
     }
 
     public Optional<UserDetailReadDto> findByPhoneNumber(String phoneNumber) {

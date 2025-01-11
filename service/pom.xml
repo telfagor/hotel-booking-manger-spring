@@ -119,6 +119,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>rocks.cleancode</groupId>
+            <artifactId>hamcrest-record</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

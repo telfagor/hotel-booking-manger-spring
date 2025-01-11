@@ -39,7 +39,7 @@
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone number</label>
                 <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}"
-                       pattern="^\(\+373\) \d{8}$" placeholder="(+373) 67643434">
+                       pattern="+\d{3} \d{8}$" placeholder="+___ ________">
                 <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
             </div>
             <div class="mb-3">

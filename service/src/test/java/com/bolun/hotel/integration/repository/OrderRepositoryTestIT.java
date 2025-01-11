@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RequiredArgsConstructor
-class OrderRepositoryTest extends IntegrationTestBase {
+class OrderRepositoryTestIT extends IntegrationTestBase {
 
     private final OrderRepository orderRepository;
 
@@ -99,7 +99,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
         TestDataImporter.importData(session);
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
 
-        Page<Order> actualResult = orderRepository.findAll(filter, pageable);
+        Page<Order> actualResult = orderRepository.findAll(null, filter, pageable);
 
         assertThat(actualResult.getTotalElements()).isEqualTo(expectedSize);
     }
@@ -114,6 +114,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
                                 2000,
                                 "tudor@gmail.com",
                                 OrderStatus.REJECTED,
+                                null,
                                 null
                         ), 1
                 ),
@@ -125,6 +126,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
                                 null,
                                 "tudor@gmail.com",
                                 null,
+                                null,
                                 null
                         ), 4
                 ),
@@ -134,6 +136,7 @@ class OrderRepositoryTest extends IntegrationTestBase {
                                 null,
                                 1300,
                                 1500,
+                                null,
                                 null,
                                 null,
                                 null

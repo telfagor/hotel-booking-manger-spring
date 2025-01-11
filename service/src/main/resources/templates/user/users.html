@@ -13,13 +13,9 @@
 <div class="container mt-5">
     <div th:replace="~{fragments/header-fragment :: header}"></div>
 
-    <h3>Filter the users</h3>
+    <h3 class="text-center">Filter the users</h3>
     <form class="mb-4" action="/users" th:object="${filter}">
         <div class="row g-3">
-            <div class="col-md-6">
-                <label for="email" class="form-label">Email</label>
-                <input id="email" type="email" name="rooms" class="form-control" min="1" th:field="*{email}">
-            </div>
             <div class="col-md-6">
                 <label for="firstName" class="form-label">First Name</label>
                 <input id="firstName" type="text" name="firstName" class="form-control" min="1" th:field="*{firstName}">
@@ -27,6 +23,10 @@
             <div class="col-md-6">
                 <label for="lastName" class="form-label">Last Name</label>
                 <input id="lastName" type="text" name="lastName" class="form-control" min="1" th:field="*{lastName}">
+            </div>
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email</label>
+                <input id="email" type="email" name="rooms" class="form-control" min="1" th:field="*{email}">
             </div>
             <div class="col-md-6">
                 <label for="gender" class="form-label">Genders</label>
@@ -89,7 +89,7 @@
             <td th:text="${iterStat.index + 1 + (data.metadata.page * data.metadata.size)}"></td>
             <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
             <td>
-                <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-primary btn-sm">View Details</a>
+                <a th:href="@{/users/{id}(id=${user.id}, userId=${user.id})}" class="btn btn-primary btn-sm">View Details</a>
             </td>
         </tr>
         </tbody>

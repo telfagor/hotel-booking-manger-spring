@@ -20,17 +20,22 @@
         </div>
 
         <div class="text-end">
-            <span th:if="${#authentication != null && #authentication.principal != null}"
+            <span th:if="${#authentication != null && #authentication.principal instanceof T(com.bolun.hotel.service.CustomUserDetails)}"
                   th:text="|Hi ${#authentication.principal.firstName} ${#authentication.principal.lastName}!|"
                   class="d-block mb-2">
             </span>
-            <a th:if="${#authentication != null && #authentication.principal != null}"
+
+            <span th:if="${#authorization.expression('isAnonymous()')}">Hi, Guest!</span>
+            <a th:if="${#authentication != null && #authentication.principal instanceof T(com.bolun.hotel.service.CustomUserDetails)}"
                th:href="@{/users/{id}(id=${#authentication.principal.id})}"
-               class="btn btn-light btn-sm me-2">My Cabinet</a>
-            <span th:if="${#authentication == null or #authentication.principal == null}">
-                Hi, Guest!
-            </span>
-            <form th:action="@{/logout}" method="post" class="d-inline">
+               class="btn btn-light btn-sm me-2">My Cabinet
+            </a>
+
+            <a th:if="${#authorization.expression('isAnonymous()')}" href="/login"
+               class="btn btn-light btn-sm me-2 d-block mb-2" >Login
+            </a>
+
+            <form th:if="${#authorization.expression('isAuthenticated()')}" th:action="@{/logout}" method="post" class="d-inline">
                 <button type="submit" class="btn btn-light btn-sm">Logout</button>
             </form>
         </div>

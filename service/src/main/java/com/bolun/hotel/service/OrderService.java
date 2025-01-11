@@ -6,7 +6,6 @@ import com.bolun.hotel.dto.filters.OrderFilter;
 import com.bolun.hotel.entity.Order;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.entity.UserDetail;
-import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.mapper.OrderCreateEditMapper;
 import com.bolun.hotel.mapper.OrderReadMapper;
 import com.bolun.hotel.repository.OrderRepository;
@@ -30,9 +29,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderCreateEditMapper orderCreateEditMapper;
     private final OrderReadMapper orderReadMapper;
+    private final OrderValidationService orderValidationService;
 
     @Transactional
     public OrderReadDto create(OrderCreateEditDto orderDto) {
+        orderValidationService.validateUserOrder(orderDto);
         return Optional.of(orderDto)
                 .map(orderCreateEditMapper::mapFrom)
                 .map(orderRepository::save)
@@ -41,26 +42,36 @@ public class OrderService {
     }
 
     @Transactional
-    public Optional<OrderReadDto> updateOrderStatus(UUID id, OrderStatus orderStatus) {
+    public Optional<OrderReadDto> updateOrderStatus(UUID id, OrderCreateEditDto orderDto) {
+        orderValidationService.validateUserOrder(orderDto);
         return orderRepository.findActiveByIdWithLock(id)
                 .map(order -> {
-                    if (orderStatus == APPROVED) {
+                    if (orderDto.orderStatus() == APPROVED) {
                         User user = order.getUser();
                         UserDetail userDetail = user.getUserDetail();
-                        Integer totalCost = calculateTotalCost(order);
+                        int totalCost = calculateTotalCost(order);
                         order.setTotalCost(totalCost);
-                        Integer money = userDetail.getMoney();
-                        money -= order.getTotalCost();
-                        userDetail.setMoney(money);
+                        setTotalCostToUser(userDetail, order);
                     }
-                    order.setStatus(orderStatus);
+                    order.setStatus(orderDto.orderStatus());
                     return orderRepository.saveAndFlush(order);
                 })
                 .map(orderReadMapper::mapFrom);
     }
 
-    public Page<OrderReadDto> findAll(OrderFilter filter, Pageable pageable) {
-        return orderRepository.findAll(filter, pageable)
+    private int calculateTotalCost(Order order) {
+        long reservationDays = ChronoUnit.DAYS.between(order.getCheckIn(), order.getCheckOut());
+        return (int) reservationDays * order.getApartment().getDailyCost();
+    }
+
+    private void setTotalCostToUser(UserDetail userDetail, Order order) {
+        Integer money = userDetail.getMoney();
+        money -= order.getTotalCost();
+        userDetail.setMoney(money);
+    }
+
+    public Page<OrderReadDto> findAll(UUID userId, OrderFilter filter, Pageable pageable) {
+        return orderRepository.findAll(userId, filter, pageable)
                 .map(orderReadMapper::mapFrom);
     }
 
@@ -83,16 +94,6 @@ public class OrderService {
                     return true;
                 })
                 .orElse(false);
-    }
-
-    public Page<OrderReadDto> findOrdersByUserId(UUID id, OrderFilter filter, Pageable pageable) {
-        return orderRepository.findAllByUserId(id, filter, pageable)
-                .map(orderReadMapper::mapFrom);
-    }
-
-    private Integer calculateTotalCost(Order order) {
-        long reservationDays = ChronoUnit.DAYS.between(order.getCheckIn(), order.getCheckOut());
-        return (int) reservationDays * order.getApartment().getDailyCost();
     }
 }
 

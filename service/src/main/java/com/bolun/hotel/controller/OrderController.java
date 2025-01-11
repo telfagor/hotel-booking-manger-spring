@@ -7,10 +7,9 @@ import com.bolun.hotel.dto.UserReadDto;
 import com.bolun.hotel.dto.filters.OrderFilter;
 import com.bolun.hotel.entity.enums.OrderStatus;
 import com.bolun.hotel.exception.InsufficientFundsException;
-import com.bolun.hotel.exception.InvalidAgeException;
+import com.bolun.hotel.exception.MinorAgeException;
 import com.bolun.hotel.service.OrderService;
 import com.bolun.hotel.service.UserService;
-import com.bolun.hotel.util.AppConstantsUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,13 +30,27 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.bolun.hotel.entity.enums.OrderStatus.IN_PROGRESS;
 
 @Controller
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
+
+    private static final List<Map<String, String>> ORDER_SORT_OPTIONS = List.of(
+            Map.of("value", "checkIn,asc", "text", "Check In (Ascending)"),
+            Map.of("value", "checkIn,desc", "text", "Check In (Descending)"),
+            Map.of("value", "checkOut,asc", "text", "Check Out (Ascending)"),
+            Map.of("value", "checkOut,desc", "text", "Check Out (Descending)"),
+            Map.of("value", "totalCost,asc", "text", "Total Cost (Low to High)"),
+            Map.of("value", "totalCost,desc", "text", "Total Cost (High to Low)"),
+            Map.of("value", "email,asc", "text", "Email (A-Z)"),
+            Map.of("value", "email,desc", "text", "Email (Z-A)")
+    );
 
     private final OrderService orderService;
     private final UserService userService;
@@ -49,10 +62,10 @@ public class OrderController {
 
     @GetMapping
     public String findAll(Model model, OrderFilter filter, Pageable pageable) {
-        Page<OrderReadDto> orders = orderService.findAll(filter, pageable);
+        Page<OrderReadDto> orders = orderService.findAll(filter.userId(), filter, pageable);
         model.addAttribute("data", PageResponse.of(orders));
         model.addAttribute("filter", filter);
-        model.addAttribute("sortOptions", AppConstantsUtil.getOrderSortOptions());
+        model.addAttribute("sortOptions", ORDER_SORT_OPTIONS);
         model.addAttribute("selectedSort", pageable.getSort().toString());
         model.addAttribute("baseUrl", "/orders");
         return "order/orders";
@@ -77,7 +90,8 @@ public class OrderController {
         Optional<UserReadDto> maybeUser = userService.findByEmail(principal.getName());
         if (maybeUser.isPresent() && maybeUser.get().userDetail() != null) {
             model.addAttribute("apartmentId", apartmentId);
-            model.addAttribute("order", new OrderCreateEditDto(null, null, null, apartmentId));
+            model.addAttribute("order", new OrderCreateEditDto(null, null,
+                    IN_PROGRESS, maybeUser.get().id(), apartmentId));
             return "order/create-order";
         }
 
@@ -92,7 +106,7 @@ public class OrderController {
 
         try {
             orderService.create(order);
-        } catch (InsufficientFundsException | InvalidAgeException e) {
+        } catch (InsufficientFundsException | MinorAgeException e) {
             model.addAttribute("error", e.getMessage());
             return "order/create-order";
         }
@@ -111,8 +125,8 @@ public class OrderController {
     }
 
     @PostMapping("{id}/update-status")
-    public String updateOrderStatus(@PathVariable("id") UUID id, @RequestParam("orderStatus") OrderStatus status) {
-        return orderService.updateOrderStatus(id, status)
+    public String updateOrderStatus(@PathVariable("id") UUID id, OrderCreateEditDto order) {
+        return orderService.updateOrderStatus(id, order)
                 .map(it -> "redirect:/orders")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

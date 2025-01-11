@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RequiredArgsConstructor
-class ApartmentRepositoryTest extends IntegrationTestBase {
+class ApartmentRepositoryTestIT extends IntegrationTestBase {
 
     private final ApartmentRepository apartmentRepository;
 
@@ -40,7 +40,7 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
     @Test
     void update() {
-        Apartment apartment = apartmentRepository.save(TestObjectsUtils.getApartment());
+        Apartment apartment = apartmentRepository.saveAndFlush(TestObjectsUtils.getApartment());
         apartment.setRooms(1);
         apartment.setSeats(4);
 
@@ -68,7 +68,13 @@ class ApartmentRepositoryTest extends IntegrationTestBase {
 
         assertThat(actualApartment)
                 .isPresent()
-                .contains(apartment);
+                .hasValueSatisfying(a -> {
+                    assertThat(a.getRooms()).isEqualTo(1);
+                    assertThat(a.getSeats()).isEqualTo(4);
+                    assertThat(a.getDailyCost()).isEqualTo(50);
+                    assertThat(a.getApartmentType()).isSameAs(ApartmentType.STANDARD);
+                    assertThat(a.getPhoto()).isEqualTo("path/to/photo.png");
+                });
     }
 
     @Test

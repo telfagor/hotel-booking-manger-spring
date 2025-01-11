@@ -9,7 +9,5 @@ import java.util.UUID;
 
 public interface FilterOrderRepository {
 
-    Page<Order> findAll(OrderFilter filter, Pageable pageable);
-
-    Page<Order> findAllByUserId(UUID id, OrderFilter filter, Pageable pageable);
+    Page<Order> findAll(UUID userId, OrderFilter filter, Pageable pageable);
 }

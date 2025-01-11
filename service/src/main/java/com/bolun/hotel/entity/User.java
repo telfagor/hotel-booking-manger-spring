@@ -62,8 +62,7 @@ public class User extends AuditingEntity<UUID> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 28)
-    @Builder.Default
-    private Role role = Role.USER;
+    private Role role;
 
     @Column(name = "gender", nullable = false, length = 28)
     @Enumerated(EnumType.STRING)

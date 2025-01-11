@@ -12,7 +12,8 @@
         <form th:action="@{/userDetails}" method="post" enctype="multipart/form-data" th:object="${userDetail}">
             <div class="mb-3">
                 <label for="phoneNumber" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber"
+                       pattern="+\d{3} \d{8}$" placeholder="+___ ________" th:field="*{phoneNumber}">
                 <p class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
             </div>
             <div class="mb-3">

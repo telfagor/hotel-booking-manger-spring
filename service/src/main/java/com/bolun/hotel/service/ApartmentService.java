@@ -63,7 +63,7 @@ public class ApartmentService {
     }
 
     @SneakyThrows
-    private void uploadImage(MultipartFile photo) {
+    public void uploadImage(MultipartFile photo) {
         if (!photo.isEmpty()) {
             imageService.upload(photo.getOriginalFilename(), photo.getInputStream());
         }

@@ -1,6 +1,7 @@
 package com.bolun.hotel.dto;
 
 import com.bolun.hotel.entity.enums.Gender;
+import com.bolun.hotel.entity.enums.Role;
 import com.bolun.hotel.validation.PasswordMatcherValidator;
 import com.bolun.hotel.validation.PasswordsMatcher;
 import com.bolun.hotel.validation.UniqueEmail;
@@ -12,13 +13,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
-@Builder
 @PasswordsMatcher(passwordField = "rawPassword", confirmPasswordField = "confirmPassword", groups = CreateAction.class)
 public record UserCreateEditDto(@NotBlank(message = "First name is required")
                                 @Size(min = 3, max = 64, message = "The first name should be between 3 and 64 characters")
@@ -39,13 +38,15 @@ public record UserCreateEditDto(@NotBlank(message = "First name is required")
 
                                 String confirmPassword,
 
+                                Role role,
+
                                 @NotNull(message = "Gender is required")
                                 Gender gender,
 
                                 @NotBlank(message = "Phone number is required", groups = UpdateAction.class)
                                 @Pattern(
-                                        regexp = "^\\(\\+373\\) \\d{8}$",
-                                        message = "Phone number must match the format (+373) 67643434",
+                                        regexp = "^\\+\\d{3} \\d{8}$",
+                                        message = "Phone number must match the format +373 67643434",
                                         groups = UpdateAction.class
                                 )
                                 String phoneNumber,
@@ -59,6 +60,30 @@ public record UserCreateEditDto(@NotBlank(message = "First name is required")
 
                                 @ValidPhoto(groups = UpdateAction.class)
                                 MultipartFile photo) implements PasswordMatcherValidator {
+
+    public UserCreateEditDto(String firstName,
+                             String lastName,
+                             String email,
+                             String rawPassword,
+                             String confirmPassword,
+                             Role role,
+                             Gender gender,
+                             String phoneNumber,
+                             Integer money,
+                             LocalDate birthdate,
+                             MultipartFile photo) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.rawPassword = rawPassword;
+        this.confirmPassword = confirmPassword;
+        this.role = role != null ? role : Role.USER;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.money = money;
+        this.birthdate = birthdate;
+        this.photo = photo;
+    }
 
     @Override
     public String getPassword() {

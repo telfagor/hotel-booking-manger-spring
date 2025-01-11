@@ -4,6 +4,7 @@ import com.bolun.hotel.validation.ValidPhoto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
@@ -13,10 +14,7 @@ public class MultipartFileValidator implements ConstraintValidator<ValidPhoto, M
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
-        if (file == null || file.isEmpty()) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("Photo is required")
-                    .addConstraintViolation();
+        if (!StringUtils.hasText(file.getOriginalFilename())) {
             return false;
         }
 

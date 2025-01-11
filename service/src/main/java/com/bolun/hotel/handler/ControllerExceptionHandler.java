@@ -1,5 +1,6 @@
 package com.bolun.hotel.handler;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.ui.Model;
@@ -23,7 +24,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public String handleResponseStatusException(ResponseStatusException ex, Model model) {
+    public String handleResponseStatusException(ResponseStatusException ex, Model model, HttpServletResponse response) {
         log.warn("ResponseStatusException: {}", ex.getReason(), ex);
 
         String customMessage;
@@ -40,6 +41,8 @@ public class ControllerExceptionHandler {
 
         model.addAttribute("message", customMessage);
         model.addAttribute("status", ex.getStatusCode());
+        response.setStatus(ex.getStatusCode().value());
+
         return "error/error";
     }
 }

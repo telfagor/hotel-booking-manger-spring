@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RequiredArgsConstructor
-class UserDetailRepositoryTest extends IntegrationTestBase {
+class UserDetailRepositoryTestIT extends IntegrationTestBase {
 
     private final UserDetailRepository userDetailRepository;
 

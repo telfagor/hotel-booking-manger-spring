@@ -18,6 +18,7 @@ public class UserToUserCreateEditDtoMapper implements Mapper<User, UserCreateEdi
                 user.getEmail(),
                 null,
                 null,
+                user.getRole(),
                 user.getGender(),
                 userDetail != null ? userDetail.getPhoneNumber() : null,
                 userDetail != null ? userDetail.getMoney() : null,

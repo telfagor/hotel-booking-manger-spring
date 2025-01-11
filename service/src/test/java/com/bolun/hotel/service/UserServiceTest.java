@@ -1,8 +1,8 @@
-/*
 package com.bolun.hotel.service;
 
 import com.bolun.hotel.dto.UserCreateEditDto;
 import com.bolun.hotel.dto.UserReadDto;
+import com.bolun.hotel.dto.filters.UserFilter;
 import com.bolun.hotel.entity.User;
 import com.bolun.hotel.integration.util.TestObjectsUtils;
 import com.bolun.hotel.mapper.UserCreateEditMapper;
@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -51,35 +51,35 @@ class UserServiceTest {
 
     @Test
     void findAll() {
+        UserFilter filter = TestObjectsUtils.getUserFilter();
         User user1 = TestObjectsUtils.getUser("test@gmail.com");
         User user2 = TestObjectsUtils.getUser("test2@gmail.com");
-        UserReadDto userReadDto1 = TestObjectsUtils.getGetUserReadDto1();
-        UserReadDto userReadDto2 = TestObjectsUtils.getGetUserReadDto2();
+        UserReadDto userReadDto1 = TestObjectsUtils.getUserReadDto1();
+        UserReadDto userReadDto2 = TestObjectsUtils.getUserReadDto2();
         List<User> users = List.of(user1, user2);
         List<UserReadDto> expectedDtos = List.of(userReadDto1, userReadDto2);
         Page<User> userPage = new PageImpl<>(users, PageRequest.of(0, 2), users.size());
-        doReturn(userPage).when(userRepository).findAll(any((Pageable.class)));
+        doReturn(userPage).when(userRepository).findAll(eq(filter), any(Pageable.class));
         doReturn(userReadDto1).when(userReadMapper).mapFrom(user1);
         doReturn(userReadDto2).when(userReadMapper).mapFrom(user2);
 
-        Page<UserReadDto> result = userService.findAll(PageRequest.of(0, 2));
+        Page<UserReadDto> actualResult = userService.findAll(filter, PageRequest.of(0, 2));
 
-        assertThat(result.getContent()).containsExactlyInAnyOrderElementsOf(expectedDtos);
-        assertThat(result.getTotalElements()).isEqualTo(users.size());
-        assertThat(result.getNumber()).isZero();
-        assertThat(result.getSize()).isEqualTo(2);
-        verify(userRepository).findAll(any(Pageable.class));
+        assertThat(actualResult.getContent()).containsExactlyInAnyOrderElementsOf(expectedDtos);
+        assertThat(actualResult.getTotalElements()).isEqualTo(users.size());
+        assertThat(actualResult.getNumber()).isZero();
+        assertThat(actualResult.getSize()).isEqualTo(2);
+        verify(userRepository).findAll(eq(filter), any(Pageable.class));
         verify(userReadMapper).mapFrom(user1);
         verify(userReadMapper).mapFrom(user2);
     }
-
 
     @Test
     void shouldFindById() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
         Optional<User> maybeUser = Optional.of(user);
-        UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto1();
-        doReturn(maybeUser).when(userRepository).findById(user.getId());
+        UserReadDto userReadDto = TestObjectsUtils.getUserReadDto1();
+        doReturn(maybeUser).when(userRepository).findActiveById(user.getId());
         doReturn(userReadDto).when(userReadMapper).mapFrom(user);
 
         Optional<UserReadDto> actualResult = userService.findById(user.getId());
@@ -87,28 +87,27 @@ class UserServiceTest {
         assertThat(actualResult)
                 .isPresent()
                 .contains(userReadDto);
-        verify(userRepository).findById(user.getId());
+        verify(userRepository).findActiveById(user.getId());
         verify(userReadMapper).mapFrom(user);
     }
 
     @Test
     void shouldNotFindById() {
         UUID fakeId = UUID.randomUUID();
-        doReturn(Optional.empty()).when(userRepository).findById(fakeId);
+        doReturn(Optional.empty()).when(userRepository).findActiveById(fakeId);
 
         Optional<UserReadDto> actualResult = userService.findById(fakeId);
 
         assertThat(actualResult).isEmpty();
-        verify(userRepository).findById(fakeId);
+        verify(userRepository).findActiveById(fakeId);
         verifyNoInteractions(userCreateEditMapper);
     }
 
-    */
-/*@Test
+@Test
     void create() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
         UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
-        UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto2();
+        UserReadDto userReadDto = TestObjectsUtils.getUserReadDto2();
         doReturn(user).when(userCreateEditMapper).mapFrom(userCreateEditDto);
         doReturn(user).when(userRepository).save(user);
         doReturn(userReadDto).when(userReadMapper).mapFrom(user);
@@ -133,47 +132,24 @@ class UserServiceTest {
     }
 
     @Test
-    void update() {
-        User user = TestObjectsUtils.getUser("test@gmail.com");
-        UserCreateEditDto userCreateEditDto = TestObjectsUtils.getUserCreateEditDto("test@gmail.com");
-        UserReadDto userReadDto = TestObjectsUtils.getGetUserReadDto1();
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
-        doReturn(user).when(userCreateEditMapper).mapFrom(userCreateEditDto, user);
-        doReturn(user).when(userRepository).saveAndFlush(user);
-        doReturn(userReadDto).when(userReadMapper).mapFrom(user);
-
-        Optional<UserReadDto> actualResult = userService.update(user.getId(), userCreateEditDto);
-
-        assertThat(actualResult)
-                .isPresent()
-                .contains(userReadDto);
-        verify(userRepository).findById(user.getId());
-        verify(userRepository).saveAndFlush(user);
-        verify(userReadMapper).mapFrom(user);
-    }
-
-    @Test
     void delete() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-        doReturn(Optional.of(user)).when(userRepository).findById(user.getId());
+        doReturn(Optional.of(user)).when(userRepository).findActiveByIdWithLock(user.getId());
 
         boolean actualResult = userService.delete(user.getId());
 
         assertTrue(actualResult);
-        verify(userRepository).findById(user.getId());
-        verify(userRepository).delete(user);
+        verify(userRepository).findActiveByIdWithLock(user.getId());
     }
 
     @Test
     void shouldNotDelete() {
         User user = TestObjectsUtils.getUser("test@gmail.com");
-        doReturn(Optional.empty()).when(userRepository).findById(user.getId());
+        doReturn(Optional.empty()).when(userRepository).findActiveByIdWithLock(user.getId());
 
         boolean actualResult = userService.delete(user.getId());
 
         assertFalse(actualResult);
-        verify(userRepository).findById(user.getId());
-        verify(userRepository, never()).delete(user);
+        verify(userRepository).findActiveByIdWithLock(user.getId());
     }
 }
-*/
